@@ -65,7 +65,7 @@ while not done:
     ''' makes art'''
     pygame.draw.rect(screen, BLACK, [5*size_of_pixel, 22*size_of_pixel, 6*size_of_pixel, 7*size_of_pixel])
     pygame.draw.rect(screen, YELLOW, [6*size_of_pixel, 23*size_of_pixel, 5*size_of_pixel, 5*size_of_pixel])
-
+    pygame.draw.rect(screen, BLACK, [10*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
 
 
 
