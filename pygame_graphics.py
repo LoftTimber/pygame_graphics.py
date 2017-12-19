@@ -26,7 +26,8 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-ORANGE = (255, 125 , 0)
+ORANGE = (255, 125, 0)
+YELLOW = (255, 255, 0)
     
 
 # Game loop
@@ -62,13 +63,40 @@ while not done:
 
 
     ''' makes art'''
-    ###
-    pygame.draw.rect(screen, RED, [10*size_of_pixel, 20*size_of_pixel, size_of_pixel, size_of_pixel])
-        
+    pygame.draw.rect(screen, BLACK, [5*size_of_pixel, 22*size_of_pixel, 6*size_of_pixel, 7*size_of_pixel])
+    pygame.draw.rect(screen, YELLOW, [6*size_of_pixel, 23*size_of_pixel, 5*size_of_pixel, 5*size_of_pixel])
+
+
+
+
+
+
+
+    
+    '''
+    pygame.draw.rect(screen, BLACK, [10*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    pygame.draw.rect(screen, BLACK, [11*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    pygame.draw.rect(screen, YELLOW, [12*size_of_pixel, 35*size_of_pixel, size_of_pixel*3, size_of_pixel]) 
+    pygame.draw.rect(screen, BLACK, [15*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    pygame.draw.rect(screen, YELLOW, [16*size_of_pixel, 35*size_of_pixel, size_of_pixel*2, size_of_pixel*4])
+    pygame.draw.rect(screen, YELLOW, [18*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    pygame.draw.rect(screen, BLACK, [19*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    pygame.draw.rect(screen, YELLOW, [20*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    pygame.draw.rect(screen, YELLOW, [21*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    pygame.draw.rect(screen, BLACK, [22*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    pygame.draw.rect(screen, YELLOW, [23*size_of_pixel, 35*size_of_pixel, size_of_pixel*14, size_of_pixel])
+    pygame.draw.rect(screen, BLACK, [37*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
+    '''
+
+
+
+
+
 
 
     
     ''' makes grid '''
+    
     while grid_line <= (leight_in_pixels-1)*size_of_pixel:
         pygame.draw.line(screen, BLACK, [grid_line, 0], [grid_line, height])
         grid_line += size_of_pixel
@@ -76,7 +104,7 @@ while not done:
     while grid_line <= (leight_in_pixels-1)*size_of_pixel:
         pygame.draw.line(screen, BLACK, [0, grid_line], [leight, grid_line])
         grid_line += size_of_pixel
-    
+   
 
     
     
