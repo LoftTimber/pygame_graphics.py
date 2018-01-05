@@ -28,7 +28,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 ORANGE = (255, 125, 0)
 YELLOW = (255, 255, 0)
-    
+  
 
 # Game loop
 done = False
@@ -48,45 +48,12 @@ while not done:
 
     # Drawing code (Describe the picture. It isn't actually drawn yet.)
     screen.fill(WHITE)
-    #44
-    #29
-    #69
-    #135
-    
 
-    
-    leight_in_pixels = 50
-    size_of_pixel = leight/leight_in_pixels
-    
-    grid_line = 0
-
-
-
-    ''' makes art'''
-    pygame.draw.rect(screen, BLACK, [5*size_of_pixel, 22*size_of_pixel, 6*size_of_pixel, 7*size_of_pixel])
-    pygame.draw.rect(screen, YELLOW, [6*size_of_pixel, 23*size_of_pixel, 5*size_of_pixel, 5*size_of_pixel])
-    pygame.draw.rect(screen, BLACK, [10*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-
-
-
-
-
-
-    
-    '''
-    pygame.draw.rect(screen, BLACK, [10*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    pygame.draw.rect(screen, BLACK, [11*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    pygame.draw.rect(screen, YELLOW, [12*size_of_pixel, 35*size_of_pixel, size_of_pixel*3, size_of_pixel]) 
-    pygame.draw.rect(screen, BLACK, [15*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    pygame.draw.rect(screen, YELLOW, [16*size_of_pixel, 35*size_of_pixel, size_of_pixel*2, size_of_pixel*4])
-    pygame.draw.rect(screen, YELLOW, [18*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    pygame.draw.rect(screen, BLACK, [19*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    pygame.draw.rect(screen, YELLOW, [20*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    pygame.draw.rect(screen, YELLOW, [21*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    pygame.draw.rect(screen, BLACK, [22*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    pygame.draw.rect(screen, YELLOW, [23*size_of_pixel, 35*size_of_pixel, size_of_pixel*14, size_of_pixel])
-    pygame.draw.rect(screen, BLACK, [37*size_of_pixel, 35*size_of_pixel, size_of_pixel, size_of_pixel])
-    '''
+    '''draw flower'''
+    x = 500
+    y = 500
+    pygame.draw.polygon(screen, YELLOW, [[x, y], [x-50, y-100], [x, y-200], [x+50, y-100]])
+    pygame.draw.polygon(screen, BLACK, [[x, y], [x-100, y-50], [x-200, y], [x-100, y+50]])
 
 
 
@@ -94,25 +61,32 @@ while not done:
 
 
 
-    
-    ''' makes grid '''
-    
-    while grid_line <= (leight_in_pixels-1)*size_of_pixel:
-        pygame.draw.line(screen, BLACK, [grid_line, 0], [grid_line, height])
-        grid_line += size_of_pixel
-    grid_line = 0
-    while grid_line <= (leight_in_pixels-1)*size_of_pixel:
-        pygame.draw.line(screen, BLACK, [0, grid_line], [leight, grid_line])
-        grid_line += size_of_pixel
-   
 
-    
-    
-    
 
-    
 
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     
     ''' angles for arcs are measured in radians (a pre-cal topic) '''
