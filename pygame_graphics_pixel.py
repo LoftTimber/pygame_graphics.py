@@ -8,8 +8,8 @@ pygame.init()
 
 # Window
 height = 600
-leight = 800
-SIZE = (leight, height)
+lenght = 800
+SIZE = (lenght, height)
 TITLE = "My Awesome Picture"
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption(TITLE)
@@ -21,16 +21,16 @@ refresh_rate = 60
 
 
 # Colors
-r = (255, 0, 0) #RED
-g = (0, 255, 0) #GREEN
-f = (34, 139, 34) #FORESTGREEN
-b = (0, 0, 255) #BLUE
+r = (255, 0, 0)     #RED
+g = (0, 255, 0)     #GREEN
+f = (34, 139, 34)   #FORESTGREEN
+b = (0, 0, 255)     #BLUE
 w = (255, 255, 255) #WHITE
-B = (0, 0, 0) #BLACK
-o = (255, 125, 0) #ORANGE
-y = (255, 255, 0) #YELLOW
-s = (139, 69, 19) #SADDLEBROWN
-    
+B = (0, 0, 0)       #BLACK
+O = (255, 165, 0)   #ORANGE
+y = (255, 255, 0)   #YELLOW
+s = (139, 69, 19)   #SADDLEBROWN
+o = (255,80,0)     #DARKERORANGE
 
 # Game loop
 done = False
@@ -46,75 +46,109 @@ while not done:
 
 
     # Game logic (Check for collisions, update points, etc.)
-    ''' leave this section alone for now ''' 
+    ''' leave this section alone for now '''
 
+    
     # Drawing code (Describe the picture. It isn't actually drawn yet.)
     screen.fill(w)
     #44
     #29
     #69
     #135
-    
-
-    
-    leight_in_pixels = 50
-    size_of_pixel = leight/leight_in_pixels
-    
-    grid_line = 0
-    line = 0
-
-    
-    line1 = [w,w,w,w,w,w,w,w,y,y]
-    line2 = [w,w,w,w,w,y,y,w,y,y,w,y,y]
-    line3 = [w,w,w,w,w,y,y,y,y,y,y,y,y]
-    line4 = [w,w,w,y,y,y,y,s,s,s,s,y,y,y]
-    line5 = [w,w,w,y,y,y,s,s,s,s,s,s,y,y]
-    line6 = [w,w,w,w,y,s,s,s,s,s,s,s,s,y]
-    line7 = [w,w,y,y,y,s,s,s,s,s,s,s,s,y,y,y]
-    line8 = [w,w,y,y,y,s,s,s,s,s,s,s,s,y,y,y]
-    line9 = [w,w,w,w,y,s,s,s,s,s,s,s,s,y]
-    line10= [w,w,y,y,y,y,s,s,s,s,s,s,y,y,y,y]
-    line11= [g,g,g,g,y,y,y,s,s,s,s,y,y,y,y,y]
-    line12= [g,g,f,f,g,y,y,y,y,y,y,y,y]
-    line13= [g,g,g,g,f,y,y,w,y,y,w,y,y]
-    line14= [w,g,g,g,g,f,g,g,y,y]
-    line15= [w,g,g,g,g,g,f,g,f,w,w,g,g,g,w,w,g]
-    line16= [w,w,g,g,g,g,f,g,f,w,g,g,g,g,g,g,g]
-    line17= [w,w,w,g,g,g,f,g,f,g,g,g,g,g,g,g,g]
-    line18= [w,w,w,w,w,g,g,f,f,g,g,f,f,f,g,g,g]
-    line19= []
+    def sunflower():
+        line1 = [0,0,0,0,0,0,0,0,y,y]
+        line2 = [0,0,0,0,0,y,y,0,y,y,0,y,y]
+        line3 = [0,0,0,0,0,y,y,y,y,y,y,y,y]
+        line4 = [0,0,0,y,y,y,y,s,s,s,s,y,y,y]
+        line5 = [0,0,0,y,y,y,s,s,s,s,s,s,y,y]
+        line6 = [0,0,0,0,y,s,s,s,s,s,s,s,s,y]
+        line7 = [0,0,y,y,y,s,s,s,s,s,s,s,s,y,y,y]
+        line8 = [0,0,y,y,y,s,s,s,s,s,s,s,s,y,y,y]
+        line9 = [0,0,0,0,y,s,s,s,s,s,s,s,s,y]
+        line10= [0,0,y,y,y,y,s,s,s,s,s,s,y,y,y,y]
+        line11= [g,g,g,g,y,y,y,s,s,s,s,y,y,y,y,y]
+        line12= [g,g,f,f,g,y,y,y,y,y,y,y,y]
+        line13= [g,g,g,g,f,y,y,w,y,y,0,y,y]
+        line14= [0,g,g,g,g,f,g,g,y,y]
+        line15= [0,g,g,g,g,g,f,g,f,0,0,g,g,g,0,0,g]
+        line16= [0,0,g,g,g,g,f,g,f,0,g,g,g,g,g,g,g]
+        line17= [0,0,0,g,g,g,f,g,f,g,g,g,g,g,g,g,g]
+        line18= [0,0,0,0,0,g,g,f,f,g,g,f,f,f,g,g,g]
+        line19= [0,0,0,0,0,0,f,f,f,g,f,g,g,g,g,g,g]
+        line20= [0,0,0,0,0,0,0,f,f,f,g,g,g,g,g]    
+        line21= [0,0,0,0,0,0,0,f,f,0,0,g,g,g]
         
+        line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17,line18,line19,line20,line21]
+
+
+        
+    def fire_flower():
+        line1 = [0,0,0,0,0,0,0,B,B]
+        line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
+        line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
+        line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
+        line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
+        line6 = [B,O,O,O,B,B,O,O,O,B,B,O,O,O,o,B]
+        line7 = [B,O,O,B,O,O,B,O,B,O,O,B,O,O,o,B]
+        line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
+        line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
+        line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
+        line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
+        line12= [0,0,0,0,0,B,B,B,B,B,B]
+        line13= [0,0,B,B,B,0,B,g,f,B,B,B,B]
+        line14= [0,B,g,g,f,B,B,g,f,B,g,g,f,B]
+        line15= [B,g,g,g,g,f,B,g,B,g,g,g,g,f,B]
+        line16= [B,f,f,f,f,f,B,B,B,f,f,f,f,f,B]
+        line17= [0,B,B,B,B,B,0,0,0,B,B,B,B,B]
+
+
+        
+    #Draws flower
+    lenght_in_pixels = 200
+    size_of_pixel = lenght/lenght_in_pixels
+    grid_line = 0
+    flower_num = 0
     
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17,line18,line19]
-
+    for i in range(100):
+        line = 0
+        sunflower()
     
-    for i in range(0, len(line_colors)):
-        position = 0
-        current_line = line_colors[line]
-        for i in range(0, len(current_line)):
-            color_picked = current_line[position]
-            pygame.draw.rect(screen, color_picked, [position*size_of_pixel, line*size_of_pixel, size_of_pixel, size_of_pixel])
-            
-            position += 1
+    
+    
+        
+        
+        line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
+        
+        for i in range(len(line_colors)):
+            position = 0
+            current_line = line_colors[line]
+            for i in range(len(current_line)):
+                color_picked = current_line[position]
+                if color_picked == 0:
+                    pass
+                else:
+                    pygame.draw.rect(screen, color_picked, [(flower_num*size_of_pixel)+position*size_of_pixel, (50*size_of_pixel)+line*size_of_pixel, size_of_pixel, size_of_pixel])
+                
+                position += 1
 
-        line += 1
+            line += 1
 
 
-
+        flower_num += 10
 
 
     
     ''' makes grid '''
-    
-    while grid_line <= (leight_in_pixels-1)*size_of_pixel:
+    '''
+    while grid_line <= (lenght_in_pixels-1)*size_of_pixel:
         pygame.draw.line(screen, B, [grid_line, 0], [grid_line, height])
         grid_line += size_of_pixel
     grid_line = 0
-    while grid_line <= (leight_in_pixels-1)*size_of_pixel:
-        pygame.draw.line(screen, B, [0, grid_line], [leight, grid_line])
+    while grid_line <= (lenght_in_pixels-1)*size_of_pixel:
+        pygame.draw.line(screen, B, [0, grid_line], [lenght, grid_line])
         grid_line += size_of_pixel
    
-
+'''
     
     
     
