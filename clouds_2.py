@@ -7,6 +7,7 @@
 # Imports
 import pygame
 import random
+import math
 
 # Initialize game engine
 pygame.init()
@@ -19,25 +20,31 @@ pygame.display.set_caption(TITLE)
 
 # Timer
 clock = pygame.time.Clock()
-refresh_rate = 30
+refresh_rate = 60
 
 # Colors
 GREEN = (0, 175, 0)
 WHITE = (255, 255, 255)
 BLUE = (75, 200, 255)
 YELLOW = (255, 255, 175)
-
+DARKERWHITE = (235, 245, 255)
 
 num_clouds = 20
-clouds = []
+
+close_clouds =[]
+far_clouds = []
 for i in range(num_clouds):
-    x = random.randrange(0, 1600)
-    y = random.randrange(-50, 200)
-    s = random.randint(1,3)
-    loc = [x, y, s]
-    clouds.append(loc)
+    for t in range(2):
+        x = random.randrange(0, 1600)
+        y = random.randrange(-50, 200)
+        s = random.randint(1,3)
+        loc = [x, y, s]
+        if t == 1:
+            far_clouds.append(loc)
+        else:
+            close_clouds.append(loc)
     
-def draw_cloud(loc):
+def draw_close_cloud(loc):
     x = loc[0]
     y = loc[1]
     s = loc[2]
@@ -48,7 +55,20 @@ def draw_cloud(loc):
     pygame.draw.ellipse(screen, WHITE, [x + 35, y, 50, 50])
     pygame.draw.rect(screen, WHITE, [x + 20, y + 20, 60, 40])
 
-   
+
+def draw_far_cloud(loc):
+    x = loc[0]
+    y = loc[1]
+    s = loc[2]
+    
+    pygame.draw.ellipse(screen, DARKERWHITE, [x, y + 20, 40 , 40])
+    pygame.draw.ellipse(screen, DARKERWHITE, [x + 60, y + 20, 40 , 40])
+    pygame.draw.ellipse(screen, DARKERWHITE, [x + 20, y + 10, 25, 25])
+    pygame.draw.ellipse(screen, DARKERWHITE, [x + 35, y, 50, 50])
+    pygame.draw.rect(screen, DARKERWHITE, [x + 20, y + 20, 60, 40])
+
+
+time = 575
 # Game loop
 done = False
 
@@ -59,12 +79,19 @@ while not done:
             done = True     
 
     # Game logic
-    for c in clouds:
-        c[0] += c[2]
+    for c in close_clouds:
+        c[0] -= 3
     
-        if c[0] > 900:
-            c[0] = random.randrange(-1700, -100)
+        if c[0] < -100:
+            c[0] = random.randrange(800, 1600)
             c[1] = random.randrange(-50, 200)
+
+    for f in far_clouds:
+        f[0] -= 2
+    
+        if f[0] < -100:
+            f[0] = random.randrange(800, 1600)
+            f[1] = random.randrange(-50, 200)
 
             
     # Drawing code
@@ -72,12 +99,19 @@ while not done:
     screen.fill(BLUE)
 
     ''' sun '''
-    pygame.draw.ellipse(screen, YELLOW, [575, 75, 100, 100])
-
+    sun_y = int((64-t**2)**(1/2))
+    if 
+    pygame.draw.ellipse(screen, YELLOW, [t, 75 + sun_y , 100, 100])
+    t +=1
     ''' clouds '''
-    for c in clouds:
-        draw_cloud(c)
+    for f in far_clouds:
+        draw_far_cloud(f)
         
+    for c in close_clouds:
+        draw_close_cloud(c)
+
+    
+      
 
     ''' grass '''
     pygame.draw.rect(screen, GREEN, [0, 400, 800, 200])
