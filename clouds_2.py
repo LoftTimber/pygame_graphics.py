@@ -27,13 +27,17 @@ refresh_rate = 60
 
 # Colors
 R = (255, 0, 0)     #RED
-G = (0, 175, 0)     #GREEN
+O = (255, 165, 0)   #ORANGE
+Y = (255, 255, 0)   #YELLOW
+G = (0, 128, 0)     #GREEN
+S = (0,0,255)       #BLUE
+I = (75,0,130)      #INDIGO
+V = (238,130,238)   #VIOLET
+
 W = (255, 255, 255) #WHITE
-b = (75, 200, 255)  #BLUE
-Y = (255, 255, 175) #YELLOW
+b = (75, 200, 255)  #SKYBLUE
 w = (235, 245, 255) #DARKERWHITE
 B = (0, 0, 0)       #BLACK
-O = (255, 165, 0)   #ORANGE
 o = (255,80,0)      #DARKERORANGE
 g = (34, 139, 34)   #FORESTGREEN
 
@@ -103,7 +107,17 @@ def draw_player():
     line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
     return line_colors
 
+def draw_rainbow():
+    line1 = [R]
+    line2 = [O]
+    line3 = [Y]
+    line4 = [G]
+    line5 = [S]
+    line6 = [I]
+    line7 = [V]
 
+    line_colors = [line1,line2,line3,line4,line5,line6,line7]
+    return line_colors
     
 time = -500
 player_x_pos = 0
@@ -149,13 +163,13 @@ while not done:
         sky = (75-abs(sun_y/20), 200-abs(sun_y/20), 255-abs(sun_y/20))
     else:
         sky = 0
-
-    sunset = (-abs(time))+700
-    if sunset<300:
-        sunset = 
+    
+    if sun_y==sun_y:
+        sunset = (-abs(sun_y))+800
+    
     # Drawing code
    
-    
+     
     ''' sky '''
     screen.fill(sky)
     
@@ -188,6 +202,10 @@ while not done:
     pygame.draw.line(screen, W, [0, 390], [800, 390], 5)
     pygame.draw.line(screen, W, [0, 410], [800, 410], 5)
 
+    
+
+
+    
     ''' player '''
     length_in_pixels = 200
     size_of_pixel = length/length_in_pixels
@@ -209,6 +227,28 @@ while not done:
 
         line += 1
 
+
+    ''' rainbow '''
+    length_in_pixels = 10
+    size_of_pixel = length/length_in_pixels
+
+    
+    line_colors = draw_rainbow()
+    line = 0
+    for i in range(len(line_colors)):
+        position = 0
+        current_line = line_colors[line]
+        
+        for i in range(len(current_line)):
+            color_picked = current_line[position]
+            if color_picked == 0:
+                pass
+            else:
+                pygame.draw.rect(screen, color_picked, [(player_x_pos)+position*size_of_pixel, (player_y_pos)+line*size_of_pixel, size_of_pixel, size_of_pixel])
+                
+            position += 1
+
+        line += 1
     if sun_y<400:
         night_surface.set_alpha(abs((sun_y/1.7)))
     else:
