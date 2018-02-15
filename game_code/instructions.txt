@@ -1,0 +1,14 @@
+#player
+UP KEY = player jumps
+DOWN KEY = player fast falls
+RIGHT KEY = player moves right
+LEFT KEY = player moves left
+
+#sun
+SPACE KEY = toggle stop/go with sun
+o = sun moves left
+p = sun moves right
+
+#weather
+r = toggle rain
+f = lightning flashes
