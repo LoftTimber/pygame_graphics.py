@@ -48,9 +48,11 @@ w = (235, 245, 255) #DARKERWHITE
 B = (0, 0, 0)       #BLACK
 o = (255,80,0)      #DARKERORANGE
 g = (34, 139, 34)   #FORESTGREEN
-'''
-jump_sound = pygame.mixer.Sound('/data/previews/362/362328_6512973-lq.ogg')
-'''
+
+thunder = pygame.mixer.Sound('sounds/thunder.ogg')
+pygame.mixer.music.load('sounds/rain.ogg')
+
+
 player_facing_left = pygame.image.load('photos/player_facing_left.png')
 player_facing_right = pygame.image.load('photos/player_facing_right.png')
 player_move_left = pygame.image.load('photos/player_move_left.png')
@@ -105,198 +107,6 @@ def draw_far_cloud(loc):
     pygame.draw.rect(screen, w, [x + 20, y + 20, 60, 40])
 
 
-def draw_player_left():
-    line1 = [0,0,0,0,0,0,0,B,B]
-    line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
-    line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
-    line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
-    line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line6 = [B,O,O,O,B,B,O,O,O,B,B,O,O,O,o,B]
-    line7 = [B,O,O,B,O,O,B,O,B,O,O,B,O,O,o,B]
-    line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
-    line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
-    line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
-    line12= [0,0,0,0,0,B,B,B,B,B,B]
-    line13= [0,0,B,B,B,0,B,G,g,B,B,B,B]
-    line14= [0,B,G,G,g,B,B,G,g,B,G,G,g,B]
-    line15= [B,G,G,G,G,g,B,G,B,G,G,G,G,g,B]
-    line16= [B,g,g,g,g,g,B,B,B,g,g,g,g,g,B]
-    line17= [0,B,B,B,B,B,0,0,0,B,B,B,B,B]
-
-    
-
-    
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
-    return line_colors
-
-def draw_player_right():
-    line1 = [0,0,0,0,0,0,0,B,B]
-    line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
-    line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
-    line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
-    line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line6 = [B,O,O,O,O,B,B,O,O,O,B,B,O,O,o,B]
-    line7 = [B,O,O,O,B,O,O,B,O,B,O,O,B,O,o,B]
-    line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
-    line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
-    line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
-    line12= [0,0,0,0,0,B,B,B,B,B,B]
-    line13= [0,0,B,B,B,0,B,G,g,B,B,B,B]
-    line14= [0,B,G,G,g,B,B,G,g,B,G,G,g,B]
-    line15= [B,G,G,G,G,g,B,G,B,G,G,G,G,g,B]
-    line16= [B,g,g,g,g,g,B,B,B,g,g,g,g,g,B]
-    line17= [0,B,B,B,B,B,0,0,0,B,B,B,B,B]
-
-    
-
-    
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
-    return line_colors
-
-def draw_left():
-    line1 = [0,0,0,0,0,0,0,B,B]
-    line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
-    line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
-    line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
-    line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line6 = [B,O,O,O,B,B,O,O,O,B,B,O,O,O,o,B]
-    line7 = [B,O,O,B,O,O,B,O,B,O,O,B,O,O,o,B]
-    line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
-    line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
-    line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
-    line12= [0,0,0,0,0,B,B,B,B,B,B]
-    line13= [0,0,0,0,0,0,B,G,g,B,B,B,B]
-    line14= [0,0,0,0,0,0,B,G,g,B,G,G,g,B]
-    line15= [0,0,0,0,0,0,B,G,B,G,G,G,G,g,B]
-    line16= [0,0,0,0,0,0,B,B,B,g,g,g,g,g,B]
-    line17= [0,0,0,0,0,0,0,0,0,B,B,B,B,B]
-
-    
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
-    return line_colors
-
-
-def draw_right():
-    line1 = [0,0,0,0,0,0,0,B,B]
-    line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
-    line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
-    line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
-    line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line6 = [B,O,O,O,O,B,B,O,O,O,B,B,O,O,o,B]
-    line7 = [B,O,O,O,B,O,O,B,O,B,O,O,B,O,o,B]
-    line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
-    line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
-    line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
-    line12= [0,0,0,0,0,B,B,B,B,B,B]
-    line13= [0,0,0,0,0,0,B,G,g,B,B,B,B]
-    line14= [0,0,0,0,0,0,B,G,g,B,G,G,g,B]
-    line15= [0,0,0,0,0,0,B,G,B,G,G,G,G,g,B]
-    line16= [0,0,0,0,0,0,B,B,B,g,g,g,g,g,B]
-    line17= [0,0,0,0,0,0,0,0,0,B,B,B,B,B]
-
-    
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
-    return line_colors
-
-def draw_left2():
-    line1 = [0,0,0,0,0,0,0,B,B]
-    line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
-    line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
-    line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
-    line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line6 = [B,O,O,O,B,B,O,O,O,B,B,O,O,O,o,B]
-    line7 = [B,O,O,B,O,O,B,O,B,O,O,B,O,O,o,B]
-    line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
-    line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
-    line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
-    line12= [0,0,0,0,0,B,B,B,B,B,B]
-    line13= [0,0,B,B,B,0,B,G,g,B,0,0,0]
-    line14= [0,B,G,G,g,B,B,G,g,B,0,0,0,0]
-    line15= [B,G,G,G,G,g,B,G,B,0,0,0,0,0,0]
-    line16= [B,g,g,g,g,g,B,B,B,0,0,0,0,0,0]
-    line17= [0,B,B,B,B,B,0,0,0,0,0,0,0,0]
-
-    
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
-    return line_colors
-
-def draw_right2():
-    line1 = [0,0,0,0,0,0,0,B,B]
-    line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
-    line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
-    line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
-    line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line6 = [B,O,O,O,O,B,B,O,O,O,B,B,O,O,o,B]
-    line7 = [B,O,O,O,B,O,O,B,O,B,O,O,B,O,o,B]
-    line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
-    line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
-    line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
-    line12= [0,0,0,0,0,B,B,B,B,B,B]
-    line13= [0,0,B,B,B,0,B,G,g,B,0,0,0]
-    line14= [0,B,G,G,g,B,B,G,g,B,0,0,0,0]
-    line15= [B,G,G,G,G,g,B,G,B,0,0,0,0,0,0]
-    line16= [B,g,g,g,g,g,B,B,B,0,0,0,0,0,0]
-    line17= [0,B,B,B,B,B,0,0,0,0,0,0,0,0]
-
-    
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
-    return line_colors
-
-
-def draw_jump_left():
-    line1 = [0,0,0,0,0,0,0,B,B]
-    line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
-    line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
-    line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
-    line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line6 = [B,O,O,O,B,B,O,O,O,B,B,O,O,O,o,B]
-    line7 = [B,O,O,B,O,O,B,O,B,O,O,B,O,O,o,B]
-    line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
-    line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
-    line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
-    line12= [0,0,0,0,0,B,B,B,B,B,B]
-    line13= [0,0,0,0,B,G,G,G,G,G,G,B]
-    line14= [0,0,0,B,G,G,G,G,G,G,G,G,B]
-    line15= [0,0,0,B,G,G,G,G,G,G,g,g,B]
-    line16= [0,0,0,0,B,G,G,G,G,G,g,B]
-    line17= [0,0,0,0,0,B,B,B,B,B,B]
-
-    
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
-    return line_colors
-
-
-def draw_jump_right():
-    line1 = [0,0,0,0,0,0,0,B,B]
-    line2 = [0,0,B,0,0,0,B,O,O,B,0,0,0,B]
-    line3 = [0,B,O,B,0,B,O,O,O,O,B,0,B,o,B]
-    line4 = [0,B,O,O,B,O,O,O,O,O,O,B,O,O,B]
-    line5 = [B,O,O,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line6 = [B,O,O,O,O,B,B,O,O,O,B,B,O,O,o,B]
-    line7 = [B,O,O,O,B,O,O,B,O,B,O,O,B,O,o,B]
-    line8 = [B,O,O,O,O,O,O,O,O,O,O,O,O,o,o,B]
-    line9 = [0,B,O,O,O,O,O,O,O,O,O,O,O,o,B]
-    line10= [0,0,B,o,O,O,O,O,O,O,o,o,o,B]
-    line11= [0,0,0,B,B,o,o,o,o,o,o,B,B]
-    line12= [0,0,0,0,0,B,B,B,B,B,B]
-    line13= [0,0,0,0,B,G,G,G,G,G,G,B]
-    line14= [0,0,0,B,G,G,G,G,G,G,G,G,B]
-    line15= [0,0,0,B,G,G,G,G,G,G,g,g,B]
-    line16= [0,0,0,0,B,G,G,G,G,G,g,B]
-    line17= [0,0,0,0,0,B,B,B,B,B,B]
-
-    
-    line_colors = [line1,line2,line3,line4,line5,line6,line7,line8,line9,line10,line11,line12,line13,line14,line15,line16,line17]
-    return line_colors
-
-
 
 def draw_rainbow():
     rainbow_list = []
@@ -345,7 +155,7 @@ raining = False
 facing_left = True
 facing_right = False
 
-line_colors = draw_player_left()
+
 length_in_pixels = 200
 size_of_pixel = length/length_in_pixels
 
@@ -373,12 +183,13 @@ while not done:
             if event.key == pygame.K_r:
                 raining = not raining
             if event.key == pygame.K_f:
-                lightning_flash = True
+                if raining:
+                    lightning_flash = True
             
             if event.key == pygame.K_UP:
                 if player_y_pos == ground:
                     y_motion -= 9.8
-                    jump_sound.play()
+                    
             if event.key == pygame.K_DOWN:
                 y_motion += 19.6
             if event.key == pygame.K_RIGHT:
@@ -462,7 +273,7 @@ while not done:
     if facing_right == True:
         player_pose = 1
         if player_y_pos < ground:
-            player_pose = 6
+            player_pose = 7
         elif x_motion > 0:
             foot_on += 1
             if foot_on <= 20:
@@ -476,7 +287,7 @@ while not done:
     if facing_left == True:
         player_pose = 0
         if player_y_pos < ground:
-            player_pose = 7
+            player_pose = 6
         elif x_motion < 0:
             foot_on += 1
             if foot_on <= 20:
@@ -574,15 +385,18 @@ while not done:
 
 
     '''lightning'''
-    if raining == True:
+    if raining:
+        random_lightning = random.randrange(1,100)
+        if random_lightning == 50:
+            lightning_flash = True
         if lightning_flash == True:
             lightning_count +=1
             screen.fill(W)
             if lightning_count == 5:
                 lightning_flash = False
                 lightning_count = 0
-    else:
-        lightning_flash = False
+                thunder.play()
+    
     
     ''' clouds '''
     cloud_counter = 0
@@ -633,31 +447,19 @@ while not done:
     ''' player2 '''
     
     
+    screen.blit(player_animation_list[player_pose], ((player_x_pos), (player_y_pos)))
     
-    line = 0
-    for i in range(len(line_colors)):
-        position = 0
-        current_line = line_colors[line]
-        
-        for i in range(len(current_line)):
-            color_picked = current_line[position]
-            if color_picked == 0:
-                pass
-            else:
-                pygame.draw.rect(screen, color_picked, [(player2_x_pos)+position*size_of_pixel, (player2_y_pos)+line*size_of_pixel, size_of_pixel, size_of_pixel])
-                
-            position += 1
-
-        line += 1
 
     
     
     ''' rain '''
     if raining == True:
+        pygame.mixer.music.play(-1)
         for s in rain:
             pygame.draw.ellipse(screen, S, s[0:4])
 
-
+    else:
+        pygame.mixer.music.stop()
         
     if sun_y<400:
         night_surface.set_alpha(abs(sun_y/1.7)+shadow)
