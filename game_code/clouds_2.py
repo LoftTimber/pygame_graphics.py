@@ -44,7 +44,7 @@ V = (238,130,238)   #VIOLET
 W = (255, 255, 255) #WHITE
 b = (75, 200, 255)  #SKYBLUE
 l = (176, 196, 222) #LIGHTSTEELBLUE
-w = (235, 245, 255) #DARKERWHITE
+DARKERWHITE = (235, 245, 255) #DARKERWHITE
 B = (0, 0, 0)       #BLACK
 o = (255,80,0)      #DARKERORANGE
 g = (34, 139, 34)   #FORESTGREEN
@@ -53,21 +53,41 @@ thunder = pygame.mixer.Sound('sounds/thunder.ogg')
 pygame.mixer.music.load('sounds/rain.ogg')
 
 
-player_facing_left = pygame.image.load('photos/player_facing_left.png')
-player_facing_right = pygame.image.load('photos/player_facing_right.png')
-player_move_left = pygame.image.load('photos/player_move_left.png')
-player_move_left2 = pygame.image.load('photos/player_move_left2.png')
-player_move_right = pygame.image.load('photos/player_move_right.png')
-player_move_right2 = pygame.image.load('photos/player_move_right2.png')
-player_jump_left = pygame.image.load('photos/player_jump_left.png')
-player_jump_right = pygame.image.load('photos/player_jump_right.png')
-player_animation_list = [player_facing_left, player_facing_right, player_move_left, player_move_left2, player_move_right, player_move_right2, player_jump_left, player_jump_right]
-
+p_facing_left = pygame.image.load('photos/player_facing_left.png')
+p_facing_right = pygame.image.load('photos/player_facing_right.png')
+p_move_left = pygame.image.load('photos/player_move_left.png')
+p_move_left2 = pygame.image.load('photos/player_move_left2.png')
+p_move_right = pygame.image.load('photos/player_move_right.png')
+p_move_right2 = pygame.image.load('photos/player_move_right2.png')
+p_jump_left = pygame.image.load('photos/player_jump_left.png')
+p_jump_right = pygame.image.load('photos/player_jump_right.png')
+p1_animation_list = [p_facing_left, p_facing_right, p_move_left, p_move_left2, p_move_right, p_move_right2, p_jump_left, p_jump_right]
+p2_animation_list = [p_facing_left, p_facing_right, p_move_left, p_move_left2, p_move_right, p_move_right2, p_jump_left, p_jump_right]
 night_surface = pygame.Surface([length, height])
 
 night_surface.fill(B)
 
 
+
+def rect_rect(rect1, rect2):
+    left1 = rect1[0]
+    right1 = rect1[0] + rect1[2]
+    top1 = rect1[1]
+    bottom1 = rect1[1] + rect1[3]
+    
+    left2 = rect2[0]
+    right2 = rect2[0] + rect2[2]
+    top2 = rect2[1]
+    bottom2 = rect2[1] + rect2[3]
+
+
+    return not (right1 <= left2 or
+                right2 <= left1 or
+                bottom1 <= top2 or
+                bottom2 <= top1)
+
+
+''' Clouds '''
 num_clouds = 100
 
 close_clouds =[]
@@ -100,11 +120,11 @@ def draw_far_cloud(loc):
     y = loc[1]
     s = loc[2]
     
-    pygame.draw.ellipse(screen, w, [x, y + 20, 40 , 40])
-    pygame.draw.ellipse(screen, w, [x + 60, y + 20, 40 , 40])
-    pygame.draw.ellipse(screen, w, [x + 20, y + 10, 25, 25])
-    pygame.draw.ellipse(screen, w, [x + 35, y, 50, 50])
-    pygame.draw.rect(screen, w, [x + 20, y + 20, 60, 40])
+    pygame.draw.ellipse(screen, DARKERWHITE, [x, y + 20, 40 , 40])
+    pygame.draw.ellipse(screen, DARKERWHITE, [x + 60, y + 20, 40 , 40])
+    pygame.draw.ellipse(screen, DARKERWHITE, [x + 20, y + 10, 25, 25])
+    pygame.draw.ellipse(screen, DARKERWHITE, [x + 35, y, 50, 50])
+    pygame.draw.rect(screen, DARKERWHITE, [x + 20, y + 20, 60, 40])
 
 
 
@@ -139,26 +159,50 @@ for i in range(1000):
 time = -500
 time_past = 5
 time_motion = 0
-player_x_pos = 0
-player_y_pos = 0
-x_motion = 0
-y_motion = 0
-player2_x_pos = 0
-player2_y_pos = 0
-x2_motion = 0
-y2_motion = 0
+
+
 foot_on = 0
-ground = 400
+p2_foot_on = 0
+bottom_ground = 400
+p1_ground = bottom_ground
+p2_ground = bottom_ground
 lightning_count = 0
+gravity = .5
+p1_speed = 5
+p2_speed = 5
+up_force = 0
+
 lightning_flash = False
 raining = False
 facing_left = True
 facing_right = False
-
+p2_facing_left = True
+p2_facing_right = False
 
 length_in_pixels = 200
 size_of_pixel = length/length_in_pixels
 
+p1_hitbox = [0, 0, 64, 68]
+p1_vel = [0, 0]
+
+p2_hitbox = [400, 0, 64, 68]
+p2_vel = [0, 0]
+
+left_wall = 0
+right_wall = 800
+celling = 0
+
+    
+
+
+''' walls '''
+wall1 =  [300, 260, 200, 50]
+wall2 =  [600, 240, 200, 50]
+wall3 =  [100, 350, 50, 200]
+
+
+walls = [wall1, wall2, wall3]
+#
 
 # Game loop
 done = False
@@ -168,13 +212,48 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
+
+        state = pygame.key.get_pressed()
+
+        up = state[pygame.K_t]
+        down = state[pygame.K_DOWN]
+        left = state[pygame.K_LEFT]
+        right = state[pygame.K_RIGHT]
+
+        holding_w = state[pygame.K_w]
+        holding_s = state[pygame.K_s]
+        holding_a = state[pygame.K_a]
+        holding_d = state[pygame.K_d]
+        
+
+
+        '''
+        if event.key == pygame.K_w:
+            if p2_hitbox[1] >= p2_ground - p1_hitbox[3]:
+                p2_vel[1] = -9.8
+                '''
+
+
+
+                
+        if holding_s:
+            gravity = gravity*10
+        if holding_d:
+            p2_vel[0] = p2_speed
+            p2_facing_right = True
+            p2_facing_left = False
+        if holding_a:
+            p2_vel[0] = -p2_speed
+            p2_facing_right = False
+            p2_facing_left = True
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 time_past = -time_past+5
             if event.key == pygame.K_m:
-                time = -400
+                time = -bottom_ground
             if event.key == pygame.K_n:
-                time = 400
+                time = bottom_ground
             if event.key == pygame.K_o:
                 time_motion -= 5
             if event.key == pygame.K_p:
@@ -185,53 +264,29 @@ while not done:
             if event.key == pygame.K_f:
                 if raining:
                     lightning_flash = True
-            
-            if event.key == pygame.K_UP:
-                if player_y_pos == ground:
-                    y_motion -= 9.8
                     
-            if event.key == pygame.K_DOWN:
-                y_motion += 19.6
-            if event.key == pygame.K_RIGHT:
-                x_motion = 5
-                facing_right = True
-                facing_left = False
-            if event.key == pygame.K_LEFT:
-                x_motion = -5
-                facing_right = False
-                facing_left = True
-            
-            
-            if event.key == pygame.K_w:
-                if player2_y_pos == ground:
-                    y2_motion -= 9.8
-            if event.key == pygame.K_s:
-                y2_motion += 19.6
-            if event.key == pygame.K_d:
-                x2_motion = 5
-            if event.key == pygame.K_a:
-                x2_motion = -5
-
-                
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP:
-                y_motion = 0
+            if event.key == pygame.K_t:
+                if landed:
+                    p1_vel[1] = up_force
+                
             if event.key == pygame.K_DOWN:
-                y_motion = 0
+                pass
             if event.key == pygame.K_RIGHT:
-                x_motion = 0
+                p1_vel[0] = 0
             if event.key == pygame.K_LEFT:
-                x_motion = 0
+                p1_vel[0] = 0
 
         
             if event.key == pygame.K_w:
-                y2_motion = 0
+                if p2_vel[1] < 0:
+                    p2_vel[1] = 0
             if event.key == pygame.K_s:
-                y2_motion = 0
+                pass
             if event.key == pygame.K_d:
-                x2_motion = 0
+                p2_vel[0] = 0
             if event.key == pygame.K_a:
-                x2_motion = 0
+                p2_vel[0] = 0
 
             
             if event.key == pygame.K_o:
@@ -239,70 +294,265 @@ while not done:
             if event.key == pygame.K_p:
                 time_motion = 0
 
+
+
+                
+    if p1_hitbox[1] >= p1_ground - p1_hitbox[3]:
+        
+        landed = True
+    else:
+        landed = False
+        up_force = 0
+        
+        
+        
+    
+
+        
+
+        
+    if up:
+        if landed and down:
+            if landed:
+                p1_vel[1] = -(p1_hitbox[3] / 8)
+        
+            
+        if landed and up_force >= -p1_hitbox[3] / 16:
+            up_force -= p1_hitbox[3] / 16
+        elif landed and up_force >= -p1_hitbox[3] / 4:
+            up_force -= .1
+            
+        
+    if not up:
+        up_force = 0
+
+
+            
+        if down:
+            gravity = gravity*10
+        
+        if right:
+            p1_vel[0] = p1_speed
+            facing_right = True
+            facing_left = False
+        if left:
+            p1_vel[0] = -p1_speed
+            facing_right = False
+            facing_left = True
+        
+        
+    # Game logic
+    
+
+
+    
+    
+
+    
+    
+    
+    
+    p1_vel[1] += gravity
+    p2_vel[1] += gravity
+    gravity = .5
+
+    
+    
+        
+    time += time_motion
+    
+    
+    
+    
+    p1_ground = bottom_ground
+    p2_ground = bottom_ground
+    
+    
+    
+
+    
+    
+    
+        
+    
+    
+    ''' horizontal collision '''
+    p1_hitbox[0] += p1_vel[0]
+    p2_hitbox[0] += p2_vel[0]
+    
+    #wall to player1
+    for w in walls:
+        if rect_rect(p1_hitbox, w):        
+            if p1_vel[0] > 0:
+                p1_hitbox[0] = w[0] - p1_hitbox[2]
+            if p1_vel[0] < 0:
+                p1_hitbox[0] = w[0] + w[2]
+                
+    #wall to player2
+    for w in walls:
+        if rect_rect(p2_hitbox, w):        
+            if p2_vel[0] > 0:
+                p2_hitbox[0] = w[0] - p2_hitbox[2]
+            if p2_vel[0] < 0:
+                p2_hitbox[0] = w[0] + w[2]
+                
+    #player to player1
+    if rect_rect(p1_hitbox, p2_hitbox):        
+            if p1_vel[0] > 0:
+                p1_hitbox[0] = p2_hitbox[0] - p1_hitbox[2]
+            if p1_vel[0] < 0:
+                p1_hitbox[0] = p2_hitbox[0] + p2_hitbox[2]
+
+    #player to player2
+    if rect_rect(p2_hitbox, p1_hitbox):        
+            if p2_vel[0] > 0:
+                p2_hitbox[0] = p1_hitbox[0] - p2_hitbox[2]
+            if p2_vel[0] < 0:
+                p2_hitbox[0] = p1_hitbox[0] + p1_hitbox[2]
+
+    
+
+
+    ''' vertical collision '''
+    p1_hitbox[1] += p1_vel[1]
+    p2_hitbox[1] += p2_vel[1]
+    
+    #wall to player1
+    for w in walls:
+        if rect_rect(p1_hitbox, w):
+            if p1_vel[1] > 0:
+                p1_hitbox[1] = w[1] - p1_hitbox[3]
+                p1_ground = w[1]
+                
+            if p1_vel[1] < 0:
+                p1_hitbox[1] = w[1] + w[3] 
+                p1_vel[1] = 0
+
+    #wall to player2
+    for w in walls:
+        if rect_rect(p2_hitbox, w):
+            if p2_vel[1] > 0:
+                p2_hitbox[1] = w[1] - p2_hitbox[3]
+                p2_ground = w[1]
+                
+            if p2_vel[1] < 0:
+                p2_hitbox[1] = w[1] + w[3] 
+                p2_vel[1] = 0
+
+    #player to player1
+    if rect_rect(p1_hitbox, p2_hitbox):
+            if p1_vel[1] > 0:
+                p1_hitbox[1] = p2_hitbox[1] - p1_hitbox[3]
+                p1_ground = p2_hitbox[1]
+                p1_vel[0] += p2_vel[0]
+                
+            if p1_vel[1] < 0:
+                p1_hitbox[1] = p2_hitbox[1] + p2_hitbox[3] 
+                p1_vel[1] = 0
+                
+    #player to player2
+    if rect_rect(p2_hitbox, p1_hitbox):
+            if p2_vel[1] > 0:
+                p2_hitbox[1] = p1_hitbox[1] - p2_hitbox[3]
+                p2_ground = p1_hitbox[1]
+                
+            if p2_vel[1] < 0:
+                p2_hitbox[1] = p1_hitbox[1] + p1_hitbox[3] 
+                p2_vel[1] = 0
+
+
+    
+                
+    
+        
     '''player 1'''
-    if player_y_pos < ground-200:
-        y_motion = 9.8
+    
         
-    if player_x_pos < 0:
-        player_x_pos = 0
+    if p1_hitbox[0] < left_wall:
+        p1_hitbox[0] = left_wall
         
-    if player_x_pos+64 > 800:
-        player_x_pos = 800-64
         
-    player_x_pos += x_motion
-    player_y_pos += y_motion
+    if p1_hitbox[0] > right_wall-p1_hitbox[2]:
+        p1_hitbox[0] = right_wall-p1_hitbox[2]
+        
+    
+    
     
     '''player 2'''
-    if player2_y_pos < ground-200:
-        y2_motion = 9.8
+    if p2_hitbox[0] < left_wall:
+        p2_hitbox[0] = left_wall
         
-    if player2_x_pos < 0:
-        player2_x_pos = 0
         
-    if player2_x_pos+64 > 800:
-        player2_x_pos = 800-64
+    if p2_hitbox[0] > right_wall-p2_hitbox[2]:
+        p2_hitbox[0] = right_wall-p2_hitbox[2]
         
-    player2_x_pos += x2_motion
-    player2_y_pos += y2_motion
+    
 
 
 
 
     
-        
+    ''' player 1 '''
     if facing_right == True:
-        player_pose = 1
-        if player_y_pos < ground:
-            player_pose = 7
-        elif x_motion > 0:
+        p1_pose = 1
+        if p1_hitbox[1] < p1_ground-p1_hitbox[3]:
+            p1_pose = 7
+        elif p1_vel[0] > 0:
             foot_on += 1
             if foot_on <= 20:
-                player_pose = 4
+                p1_pose = 4
     
             else:
-                player_pose = 5
+                p1_pose = 5
                 if foot_on >= 40:
                     foot_on = 0
                 
     if facing_left == True:
-        player_pose = 0
-        if player_y_pos < ground:
-            player_pose = 6
-        elif x_motion < 0:
+        p1_pose = 0
+        if p1_hitbox[1] < p1_ground-p1_hitbox[3]:
+            p1_pose = 6
+        elif p1_vel[0] < 0:
             foot_on += 1
             if foot_on <= 20:
-                player_pose = 2
+                p1_pose = 2
         
             else:
-                player_pose = 3
+                p1_pose = 3
+                if foot_on >= 40:
+                    foot_on = 0
+
+
+
+    ''' player 2 '''
+    if p2_facing_right == True:
+        p2_pose = 1
+        if p2_hitbox[1] < p2_ground-p2_hitbox[3]:
+            p2_pose = 7
+        elif p2_vel[0] > 0:
+            foot_on += 1
+            if foot_on <= 20:
+                p2_pose = 4
+    
+            else:
+                p2_pose = 5
+                if foot_on >= 40:
+                    foot_on = 0
+                
+    if p2_facing_left == True:
+        p2_pose = 0
+        if p2_hitbox[1] < p2_ground-p2_hitbox[3]:
+            p2_pose = 6
+        elif p2_vel[0] < 0:
+            foot_on += 1
+            if foot_on <= 20:
+                p2_pose = 2
+        
+            else:
+                p2_pose = 3
                 if foot_on >= 40:
                     foot_on = 0
                 
     
-
-    time += time_motion
-    
-    # Game logic
     for c in close_clouds:
         c[0] -= 3
     
@@ -327,21 +577,20 @@ while not done:
         sunset = 300
     else:
         sunset = 1000
-    '''player 1'''
-    if y_motion == 0:
-    
-        if player_y_pos < ground:
-            player_y_pos += 9.8
-    if player_y_pos > ground:
-        player_y_pos = ground
 
-    '''player 2'''
-    if y2_motion == 0:
+        
+    '''player 1'''
     
-        if player2_y_pos < ground:
-            player2_y_pos += 9.8
-    if player2_y_pos > ground:
-        player2_y_pos = ground
+    if p1_hitbox[1] >= p1_ground-p1_hitbox[3]:
+        p1_hitbox[1] = p1_ground-p1_hitbox[3]
+        p1_vel[1] = 0
+
+    ''' p2 '''
+    if p2_hitbox[1] >= p2_ground-p2_hitbox[3]:
+        p2_hitbox[1] = p2_ground-p2_hitbox[3]
+        p2_vel[1] = 0
+
+    
 
     ''' rain '''
     for r in rain:
@@ -352,7 +601,16 @@ while not done:
             r[0] = random.randrange(-10, 1600)
             r[1] = random.randrange(-600, -10)
 
+    if rect_rect(p1_hitbox, p2_hitbox):
             
+            pass
+    
+
+    
+    
+    
+    
+    
     # Drawing code
    
      
@@ -421,9 +679,9 @@ while not done:
     '''
 
     ''' grass '''
-    pygame.draw.rect(screen, G, [0, 400, 800, 200])
+    pygame.draw.rect(screen, G, [0, bottom_ground, 800, 200])
 
-    ''' fence '''
+    ''' fence 
     y = 380
     for x in range(5, 800, 30):
         pygame.draw.polygon(screen, W, [[x+5, y], [x+10, y+5],
@@ -431,7 +689,7 @@ while not done:
                                             [x, y+5]])
     pygame.draw.line(screen, W, [0, 390], [800, 390], 5)
     pygame.draw.line(screen, W, [0, 410], [800, 410], 5)
-
+    '''
     
 
 
@@ -439,7 +697,7 @@ while not done:
     ''' player '''
     
     
-    screen.blit(player_animation_list[player_pose], ((player_x_pos), (player_y_pos)))
+    screen.blit(p1_animation_list[p1_pose], ((p1_hitbox[0]), (p1_hitbox[1])))
     
 
 
@@ -447,7 +705,7 @@ while not done:
     ''' player2 '''
     
     
-    screen.blit(player_animation_list[player_pose], ((player_x_pos), (player_y_pos)))
+    screen.blit(p2_animation_list[p2_pose], ((p2_hitbox[0]), (p2_hitbox[1])))
     
 
     
@@ -461,7 +719,7 @@ while not done:
     else:
         pygame.mixer.music.stop()
         
-    if sun_y<400:
+    if sun_y<bottom_ground:
         night_surface.set_alpha(abs(sun_y/1.7)+shadow)
         if abs(sun_y/1.7)+shadow > 235:
             night_surface.set_alpha(235)
@@ -469,7 +727,8 @@ while not done:
         night_surface.set_alpha(235)
         
    
-
+    for w in walls:
+        pygame.draw.rect(screen, R, w)
         
     screen.blit(night_surface,[0,0])
     
