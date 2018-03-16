@@ -85,6 +85,81 @@ def rect_rect(rect1, rect2):
                 bottom1 <= top2 or
                 bottom2 <= top1)
 
+def to_left(rect1, rect2):
+    left1 = rect1[0]
+    right1 = rect1[0] + rect1[2]
+    top1 = rect1[1]
+    bottom1 = rect1[1] + rect1[3]
+    
+    left2 = rect2[0]
+    right2 = rect2[0] + rect2[2] +1
+    top2 = rect2[1]
+    bottom2 = rect2[1] + rect2[3]
+
+
+    return not (right1 <= left2 or
+                right2 <= left1 or
+                bottom1 <= top2 or
+                bottom2 <= top1)
+
+
+def to_right(rect1, rect2):
+    left1 = rect1[0]
+    right1 = rect1[0] + rect1[2] +1
+    top1 = rect1[1]
+    bottom1 = rect1[1] + rect1[3]
+    
+    left2 = rect2[0]
+    right2 = rect2[0] + rect2[2]
+    top2 = rect2[1]
+    bottom2 = rect2[1] + rect2[3]
+
+
+    return not (right1 <= left2 or
+                right2 <= left1 or
+                bottom1 <= top2 or
+                bottom2 <= top1)
+    
+
+def is_above(rect1, rect2):   
+    left1 = rect1[0]
+    right1 = rect1[0] + rect1[2]
+    top1 = rect1[1]
+    bottom1 = rect1[1] + rect1[3]
+    
+    left2 = rect2[0]
+    right2 = rect2[0] + rect2[2]
+    top2 = rect2[1]
+    bottom2 = rect2[1] + rect2[3] +1
+
+
+    return not (right1 <= left2 or
+                right2 <= left1 or
+                bottom1 <= top2 or
+                bottom2 <= top1)
+
+
+def is_below(rect1, rect2):
+    left1 = rect1[0]
+    right1 = rect1[0] + rect1[2]
+    top1 = rect1[1]
+    bottom1 = rect1[1] + rect1[3] +1
+    
+    left2 = rect2[0]
+    right2 = rect2[0] + rect2[2]
+    top2 = rect2[1]
+    bottom2 = rect2[1] + rect2[3]
+
+
+    return not (right1 <= left2 or
+                right2 <= left1 or
+                bottom1 <= top2 or
+                bottom2 <= top1)
+
+
+
+
+
 
 ''' Clouds '''
 num_clouds = 100
@@ -176,6 +251,11 @@ facing_right = False
 p2_facing_left = True
 p2_facing_right = False
 
+p1_facing_up = True
+p1_facing_down = False
+p1_facing_right = False
+p1_facing_left = False
+
 length_in_pixels = 200
 size_of_pixel = length/length_in_pixels
 
@@ -191,7 +271,7 @@ celling = 0
 ground = 600
 
 metronome = 160
-count = 0
+beat = 0
 
     
 
@@ -226,7 +306,9 @@ while not done:
             pass
             
             
-    beat = (metronome/refresh_rate)
+    quarter = (metronome/refresh_rate)
+    eighth = quarter*2
+    sixteenth = quarter*4
     
     
 
@@ -252,94 +334,199 @@ while not done:
     p2_vel[1] = 0
         
     ground = ground
-    if int(refresh_rate/beat) == count:
-        
-        count = 0
-        
 
-        ''' p1 up '''
-        at_wall = False
+
+
+    
+    #sixteenth beat
+    if beat%int(refresh_rate/(sixteenth)) == 0:
+
+        p2_above_wall = False
+        p2_below_wall = False
+        p2_right_wall = False
+        p2_left_wall = False
+        p1_below_wall = False
+        p1_above_wall = False
+        p1_left_wall = False
+        p1_right_wall = False
+
+        can_up = False
+
+
+        
         for w in walls:
-                if p2_hitbox[1] == w[1]+w[3]:
-                    at_wall == True
-                    print("at_wall")
-        if not(p1_hitbox[1] == p2_hitbox[1] + p2_hitbox[3] and p1_hitbox[0] == p2_hitbox[0]) or holding_w:
+            #p2 is below
+            if is_below(w, p2_hitbox):
+                p2_below_wall = True
+
+
+        for w in walls:
+            #p2 is above
+            if is_above(w, p2_hitbox):
+                p2_above_wall = True
+                
+
+        for w in walls:
+            #p2 to left
+            if to_left(w, p2_hitbox):
+                p2_left_wall = True
+
+
+        for w in walls:
+            # p2 to right
+            if to_right(w, p2_hitbox):
+                p2_right_wall = True
+
+
+        for w in walls:
+            # p1 is below
+            if is_below(w, p1_hitbox):
+                p1_below_wall = True
+
+
+        for w in walls:
+            #  p1 is above
+            if is_above(w, p1_hitbox):
+                p1_above_wall = True
+
+
+        for w in walls:
+            # p1 to left
+            if to_left(w, p1_hitbox):
+                p1_left_wall = True
+
+
+        for w in walls:
+            # p1 to right
+            if to_right(w, p1_hitbox):
+                p1_right_wall = True
+
+        if (not is_below(p2_hitbox, p1_hitbox) or ((holding_w and p2_below_wall == False) or \
+            (holding_d and p2_left_wall == False) or (holding_a and p2_right_wall == False))):
+            can_up = True
+    
+
+
             
-                    
-            if up and at_wall == False:
-                p1_vel[1] = -50
+    #eighth beat
+    if beat%int(refresh_rate/(eighth)) == 0:
+        
+        
+        if up and can_up:
+            
+                        
+            
+            p1_vel[1] = -50
+            p1_facing_up = True
+            p1_facing_down = False
+            p1_facing_right = False
+            p1_facing_left = False
+
         elif up:
             print("hit")
 
 
+
+        
+        if (down and not up) and (not is_above(p2_hitbox, p1_hitbox) or ((holding_s and p2_above_wall == False) or \
+            (holding_d and p2_left_wall == False) or (holding_a and p2_right_wall == False))):
             
-        ''' p1 down '''
-        if not(p1_hitbox[1] == p2_hitbox[1] - p1_hitbox[3] and p1_hitbox[0] == p2_hitbox[0]) or (holding_s and not (p2_hitbox[1]+p2_hitbox[3] == wall1[1] or p2_hitbox[1]+p2_hitbox[3] == wall3[1])):
-            if down:
-                p1_vel[1] = 50
-        elif down:
+                        
+            
+            p1_vel[1] = 50
+            p1_facing_up = False
+            p1_facing_down = True
+            p1_facing_right = False
+            p1_facing_left = False
+
+        elif (down and not up):
             print("hit")
 
+        if (right and not (up or down)) and (not to_right(p1_hitbox, p2_hitbox) or ((holding_w and p2_below_wall == False) or \
+                   (holding_s and p2_above_wall == False) or (holding_d and p2_left_wall == False))):
+            
+            p1_vel[0] = 50
+            p1_facing_up = False
+            p1_facing_down = False
+            p1_facing_right = True
+            p1_facing_left = False
 
-
-        ''' p1 right '''
-        if not(p1_hitbox[0] == p2_hitbox[0] - p1_hitbox[2] and p1_hitbox[1] == p2_hitbox[1]) or (holding_d and not (p2_hitbox[0]+p2_hitbox[2] == wall1[0] or p2_hitbox[0]+p2_hitbox[2] == wall3[0])):
-            if not(up or down):
-                if right:
-                    p1_vel[0] = 50
-        elif right:
+        elif (right and not (up or down)):
             print("hit")
 
+        if (left and not (up or down or right)) and (not to_left(p1_hitbox, p2_hitbox) or ((holding_w and p2_below_wall == False) or \
+                   (holding_s and p2_above_wall == False) or (holding_a and p2_right_wall == False))):
+            
+            p1_vel[0] = -50
+            p1_facing_up = False
+            p1_facing_down = False
+            p1_facing_right = False
+            p1_facing_left = True
 
-
-        ''' p1 left '''    
-        if not(p1_hitbox[0] == p2_hitbox[0] + p2_hitbox[2] and p1_hitbox[1] == p2_hitbox[1]) or (holding_a and not (p2_hitbox[0] == wall1[0]+wall1[2] or p2_hitbox[0] == wall3[0]+wall3[2])):
-            if not(up or down):
-                if left:
-                    p1_vel[0] = -50
-        elif left:
+        elif (left and (not up or down or right)):
             print("hit")
 
+        
 
+    
 
-        ''' p2 up '''
-        if not(p1_hitbox[1] == p2_hitbox[1] - p1_hitbox[3] and p1_hitbox[0] == p2_hitbox[0]) or (up and not (p1_hitbox[1] == wall1[1]+wall1[3] or p1_hitbox[1] == wall3[1]+wall3[3])):
-            if holding_w:
-                p2_vel[1] = -50
+    
+
+        #quarter beat
+    if beat%int(refresh_rate/(quarter)) == 0:
+        if holding_w and (not is_below(p1_hitbox, p2_hitbox) or ((up and p1_below_wall == False) or \
+                    (right and p1_left_wall == False) or (left and p1_right_wall == False))):
+            
+            p2_vel[1] = -50
+            p2_facing_up = True
+            p2_facing_down = False
+            p2_facing_right = False
+            p2_facing_left = False
+
         elif holding_w:
             print("hit")
 
+        if (holding_s and not (holding_w)) and (not is_above(p1_hitbox, p2_hitbox) or ((down and p1_above_wall == False) or \
+                    (right and p1_left_wall == False) or (left and p1_right_wall == False))):
+            
+            p2_vel[1] = 50
+            p2_facing_up = False
+            p2_facing_down = True
+            p2_facing_right = False
+            p2_facing_left = False
 
+        elif (holding_s and not (holding_w)):
+            print("hit")
 
-        ''' p2 down '''
-        if not(p1_hitbox[1] == p2_hitbox[1] + p2_hitbox[3] and p1_hitbox[0] == p2_hitbox[0]) or (down and not (p1_hitbox[1]+p1_hitbox[3] == wall1[1] or p1_hitbox[1]+p1_hitbox[3] == wall3[1])):
-            if holding_s:
-                p2_vel[1] = 50
-        elif holding_s:
+        if (holding_d and not (holding_w or holding_s)) and (not to_left(p1_hitbox, p2_hitbox) or ((up and p1_below_wall == False) or \
+                    (down and p1_above_wall == False) or (right and p1_left_wall == False))):
+            
+            p2_vel[0] = 50
+            p2_facing_up = False
+            p2_facing_down = False
+            p2_facing_right = True
+            p2_facing_left = False
+
+        elif (holding_d and not (holding_w or holding_s)):
+            print("hit")
+
+        if (holding_a and not (holding_w or holding_s or holding_d)) and (not to_right(p1_hitbox, p2_hitbox) or ((up and p1_below_wall == False) or \
+                    (down and p1_above_wall == False) or (left and p1_right_wall == False))):
+            
+            p2_vel[0] = -50
+            p2_facing_up = False
+            p2_facing_down = False
+            p2_facing_right = False
+            p2_facing_left = True
+
+        elif (holding_a and not (holding_w or holding_s or holding_d)):
             print("hit")
 
 
-
-        ''' p2 right '''
-        if not(p1_hitbox[0] == p2_hitbox[0] + p2_hitbox[2] and p1_hitbox[1] == p2_hitbox[1]) or (right and not (p1_hitbox[0]+p1_hitbox[2] == wall1[0] or p1_hitbox[0]+p1_hitbox[2] == wall3[0])):
-            if not(holding_w or holding_s):
-                if holding_d:
-                    p2_vel[0] = 50
-        elif holding_d:
-            print("hit")
-
-
-
-        ''' p2 left '''
-        if not(p1_hitbox[0] == p2_hitbox[0] - p1_hitbox[2] and p1_hitbox[1] == p2_hitbox[1]) or (left and not (p1_hitbox[0] == wall1[0]+wall1[2] or p1_hitbox[0] == wall3[0]+wall3[2])):
-            if not(holding_w or holding_s):
-                if holding_a:
-                    p2_vel[0] = -50
-        elif holding_a:
-            print("hit")
+        
                 
     
-    count += 1
+    beat += 1
         
     # Game logic
     
@@ -371,36 +558,52 @@ while not done:
     p1_hitbox[0] += p1_vel[0]
     p2_hitbox[0] += p2_vel[0]
 
-    #player to player
-    if rect_rect(p1_hitbox, p2_hitbox):
+    p1_hitbox[1] += p1_vel[1]
+    p2_hitbox[1] += p2_vel[1]
+
+    
         
-        if p1_vel[0] > 0:
-            p1_hitbox[0] = p2_hitbox[0] - p1_hitbox[2]
-        elif p1_vel[0] < 0:
-            p1_hitbox[0] = p2_hitbox[0] + p2_hitbox[2]
-        elif p2_vel[0] > 0:
-            p2_hitbox[0] = p1_hitbox[0] - p2_hitbox[2]
-        elif p2_vel[0] < 0:
-            p2_hitbox[0] = p1_hitbox[0] + p1_hitbox[2]
             
         
     
     #wall to player1
     for w in walls:
         if rect_rect(p1_hitbox, w):        
-            if p1_vel[0] > 0:
+            if p1_facing_right:
                 p1_hitbox[0] = w[0] - p1_hitbox[2]
-            if p1_vel[0] < 0:
+            if p1_facing_left:
                 p1_hitbox[0] = w[0] + w[2]
                 
     #wall to player2
     for w in walls:
         if rect_rect(p2_hitbox, w):        
-            if p2_vel[0] > 0:
+            if p2_facing_right:
                 p2_hitbox[0] = w[0] - p2_hitbox[2]
-            if p2_vel[0] < 0:
+            if p2_facing_left:
                 p2_hitbox[0] = w[0] + w[2]
-                
+
+
+    #player to player
+    if rect_rect(p1_hitbox, p2_hitbox):
+        print("hit")
+        
+        
+        
+        
+
+        if p2_vel[0] > 0:
+            p2_hitbox[0] = p2_hitbox[0] - p2_hitbox[2]
+            
+        
+
+        if p2_vel[0] < 0:
+            p2_hitbox[0] = p2_hitbox[0] + p2_hitbox[2]
+
+            
+##        elif p2_facing_right:
+##            p2_hitbox[0] = p1_hitbox[0] - p2_hitbox[2]
+##        elif p2_facing_left:
+##            p2_hitbox[0] = p1_hitbox[0] + p1_hitbox[2]
    
     
     
@@ -411,41 +614,42 @@ while not done:
 
 
     ''' vertical collision '''
-    p1_hitbox[1] += p1_vel[1]
-    p2_hitbox[1] += p2_vel[1]
+    
 
-    #player to player1
-    if rect_rect(p1_hitbox, p2_hitbox):
-        if p1_vel[1] > 0:
-            p1_hitbox[1] = p2_hitbox[1] - p1_hitbox[3]
-        if p1_vel[1] < 0:
-            p1_hitbox[1] = p2_hitbox[1] + p2_hitbox[3]
-        if p2_vel[1] > 0:
-            p2_hitbox[1] = p1_hitbox[1] - p2_hitbox[3]
-        if p2_vel[1] < 0:
-            p2_hitbox[1] = p1_hitbox[1] + p1_hitbox[3]
+    
     
     #wall to player1
     for w in walls:
         if rect_rect(p1_hitbox, w):
-            if p1_vel[1] > 0:
+            if p1_facing_down:
                 p1_hitbox[1] = w[1] - p1_hitbox[3]
                 
                 
-            if p1_vel[1] < 0:
+            if p1_facing_up:
                 p1_hitbox[1] = w[1] + w[3] 
                 p1_vel[1] = 0
 
     #wall to player2
     for w in walls:
         if rect_rect(p2_hitbox, w):
-            if p2_vel[1] > 0:
+            if p2_facing_down:
                 p2_hitbox[1] = w[1] - p2_hitbox[3]
                 
                 
-            if p2_vel[1] < 0:
+            if p2_facing_up:
                 p2_hitbox[1] = w[1] + w[3] 
                 p2_vel[1] = 0
+
+
+    #player to player1
+    if rect_rect(p1_hitbox, p2_hitbox):
+        print("hit")
+        
+        
+        if p2_facing_down:
+            p2_hitbox[1] = p1_hitbox[1] - p2_hitbox[3]
+        if p2_facing_up:
+            p2_hitbox[1] = p1_hitbox[1] + p1_hitbox[3]
 
     
             
