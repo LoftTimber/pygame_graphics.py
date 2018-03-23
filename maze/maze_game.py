@@ -52,17 +52,17 @@ g = (34, 139, 34)   #FORESTGREEN
 
 
 
-p_facing_left = pygame.image.load('photos/player_facing_left.png')
-p_facing_right = pygame.image.load('photos/player_facing_right.png')
-p_move_left = pygame.image.load('photos/player_move_left.png')
-p_move_left2 = pygame.image.load('photos/player_move_left2.png')
-p_move_right = pygame.image.load('photos/player_move_right.png')
-p_move_right2 = pygame.image.load('photos/player_move_right2.png')
-p_jump_left = pygame.image.load('photos/player_jump_left.png')
-p_jump_right = pygame.image.load('photos/player_jump_right.png')
-p1_animation_list = [p_facing_left, p_facing_right, p_move_left, p_move_left2, p_move_right, p_move_right2, p_jump_left, p_jump_right]
-p2_animation_list = [p_facing_left, p_facing_right, p_move_left, p_move_left2, p_move_right, p_move_right2, p_jump_left, p_jump_right]
-night_surface = pygame.Surface([length, height])
+##p_facing_left = pygame.image.load('photos/player_facing_left.png')
+##p_facing_right = pygame.image.load('photos/player_facing_right.png')
+##p_move_left = pygame.image.load('photos/player_move_left.png')
+##p_move_left2 = pygame.image.load('photos/player_move_left2.png')
+##p_move_right = pygame.image.load('photos/player_move_right.png')
+##p_move_right2 = pygame.image.load('photos/player_move_right2.png')
+##p_jump_left = pygame.image.load('photos/player_jump_left.png')
+##p_jump_right = pygame.image.load('photos/player_jump_right.png')
+##p1_animation_list = [p_facing_left, p_facing_right, p_move_left, p_move_left2, p_move_right, p_move_right2, p_jump_left, p_jump_right]
+##p2_animation_list = [p_facing_left, p_facing_right, p_move_left, p_move_left2, p_move_right, p_move_right2, p_jump_left, p_jump_right]
+##night_surface = pygame.Surface([length, height])
 
 
 
@@ -264,10 +264,10 @@ p2_facing_left = False
 length_in_pixels = 200
 size_of_pixel = length/length_in_pixels
 
-p1_hitbox = [0, 0, 50, 50]
+p1_hitbox = [0, 0, 25, 25]
 p1_vel = [0, 0]
 
-p2_hitbox = [400, 0, 50, 50]
+p2_hitbox = [400, 0, 25, 25]
 p2_vel = [0, 0]
 
 left_wall = 0
@@ -277,6 +277,8 @@ ground = 600
 
 metronome = 120
 beat = 0
+p1_hp = 10
+p2_hp = 10
 
     
 
@@ -285,9 +287,13 @@ beat = 0
 wall1 =  [300, 250, 200, 50]
 wall2 =  [600, 150, 200, 50]
 wall3 =  [100, 300, 50, 200]
+wall4 =  [0, -1, 800, 1]
+wall5 =  [-1, 0, 1, 600]
+wall6 =  [0, 600, 800, 1]
+wall7 =  [800, 0, 1, 600]
 
 
-walls = [wall1, wall2, wall3]
+walls = [wall1, wall2, wall3, wall4, wall5, wall6, wall7]
 #
 
 # Game loop
@@ -310,22 +316,23 @@ while not done:
         if event.type == pygame.KEYUP:
             pass
             
-    beat_per_second = (refresh_rate**2/metronome)
+    sixteenth = int((refresh_rate**2/metronome)/4)
+    eighth = sixteenth*2
+    quarter = sixteenth*4
     
     
     
     
     
     
+    p1_beat = quarter
+    p2_beat = quarter
 
-    p1_beat = beat_per_second
-    p2_beat = beat_per_second
-
     
     
     
     
-    print((beat)%((p1_beat)))
+    
     
     
     state = pygame.key.get_pressed()
@@ -334,24 +341,28 @@ while not done:
     down = False
     left = False
     right = False
+    p1_attack = False
     #eighth beat
-    if (beat)%((p1_beat)) == 0:
+    if (beat)%(int(p1_beat)) == 0:
         up = state[pygame.K_UP]
         down = state[pygame.K_DOWN]
         left = state[pygame.K_LEFT]
         right = state[pygame.K_RIGHT]
+        p1_attack = state[pygame.K_PAGEDOWN]
 
 
     holding_w = False
     holding_s = False
     holding_a = False
     holding_d = False
+    p2_attack = False
     #quarter beat
-    if beat%((p2_beat)) == 0:
+    if beat%(int(p2_beat)) == 0:
         holding_w = state[pygame.K_w]
         holding_s = state[pygame.K_s]
         holding_a = state[pygame.K_a]
         holding_d = state[pygame.K_d]
+        p2_attack = state[pygame.K_e]
 
     p1_vel[0] = 0
     p1_vel[1] = 0
@@ -473,96 +484,104 @@ while not done:
 
         
     #eighth beat
-    if (beat)%((p1_beat)) == 0:
+    if (beat)%(int(p1_beat)) == 0:######################################################################## make weapon hitbox ###
+        weapon_swing = False
+        if p1_attack:
+            weapon_swing = True
+            if is_below(p2_hitbox, p1_hitbox) or is_above(p2_hitbox, p1_hitbox) or to_left(p2_hitbox, p1_hitbox) or to_right(p2_hitbox, p1_hitbox):
+                print("attack")
+            
         
-        
-        
-        if up:
+        if (up and not p1_attack):
             p1_facing_up = True
             p1_facing_down = False
             p1_facing_right = False
             p1_facing_left = False
             if can_up:
-                 p1_vel[1] = -50
+                 p1_vel[1] = -p1_hitbox[2]
             else:
                 print("hit")
             
         
-        if (down and not up):
+        if (down and not (up or p1_attack)):
             p1_facing_up = False
             p1_facing_down = True
             p1_facing_right = False
             p1_facing_left = False
             if can_down:
-                p1_vel[1] = 50
+                p1_vel[1] = p1_hitbox[2]
             else:
                 print("hit")
                 
 
-        if (right and not (up or down)):
+        if (right and not (up or down or p1_attack)):
             p1_facing_up = False
             p1_facing_down = False
             p1_facing_right = True
             p1_facing_left = False
             if can_right:
-                p1_vel[0] = 50
+                p1_vel[0] = p1_hitbox[2]
             else:
                 print("hit")
                 
 
-        if (left and not (up or down or right)):
+        if (left and not (up or down or right or p1_attack)):
             p1_facing_up = False
             p1_facing_down = False
             p1_facing_right = False
             p1_facing_left = True
             if can_left:
-                p1_vel[0] = -50
+                p1_vel[0] = -p1_hitbox[2]
             else:
                 print("hit")
 
     
         #quarter beat
-    if beat%((p2_beat)) == 0:
-        if holding_w:
+    if beat%(int(p2_beat)) == 0:
+
+        if p2_attack:
+            print("attack")
+        
+        if holding_w and not p2_attack:
             p2_facing_up = True
             p2_facing_down = False
             p2_facing_right = False
             p2_facing_left = False
             if can_holding_w:
-                p2_vel[1] = -50
+                p2_vel[1] = -p2_hitbox[2]
             else:
                 print("hit")
 
 
-        if (holding_s and not (holding_w)):
+        if (holding_s and not (holding_w or p2_attack)):
             p2_facing_up = False
             p2_facing_down = True
             p2_facing_right = False
             p2_facing_left = False
             if can_holding_s:
-                p2_vel[1] = 50
+                p2_vel[1] = p2_hitbox[2]
             else:
                 print("hit")
 
 
-        if (holding_d and not (holding_w or holding_s)):
+        if (holding_d and not (holding_w or holding_s or p2_attack)):
             p2_facing_up = False
             p2_facing_down = False
             p2_facing_right = True
             p2_facing_left = False
             if can_holding_d:
-                p2_vel[0] = 50
+                p2_vel[0] = p2_hitbox[2]
             else:
                 print("hit")
                 
 
-        if (holding_a and not (holding_w or holding_s or holding_d)):
+        if (holding_a and not (holding_w or holding_s or holding_d or p2_attack)):
             p2_facing_up = False
             p2_facing_down = False
             p2_facing_right = False
             p2_facing_left = True
             if can_holding_a:
-                p2_vel[0] = -50
+                p2_vel[0] = -p2_hitbox[2]
             else:
                print("hit")
 
@@ -712,23 +731,23 @@ while not done:
     '''player 1'''
     
         
-    if p1_hitbox[0] < left_wall:
-        p1_hitbox[0] = left_wall
-        
-        
-    if p1_hitbox[0] > right_wall-p1_hitbox[2]:
-        p1_hitbox[0] = right_wall-p1_hitbox[2]
-        
-    
-    
-    
-    '''player 2'''
-    if p2_hitbox[0] < left_wall:
-        p2_hitbox[0] = left_wall
-        
-        
-    if p2_hitbox[0] > right_wall-p2_hitbox[2]:
-        p2_hitbox[0] = right_wall-p2_hitbox[2]
+##    if p1_hitbox[0] < left_wall:
+##        p1_hitbox[0] = left_wall
+##        
+##        
+##    if p1_hitbox[0] > right_wall-p1_hitbox[2]:
+##        p1_hitbox[0] = right_wall-p1_hitbox[2]
+##        
+##    
+##    
+##    
+##    '''player 2'''
+##    if p2_hitbox[0] < left_wall:
+##        p2_hitbox[0] = left_wall
+##        
+##        
+##    if p2_hitbox[0] > right_wall-p2_hitbox[2]:
+##        p2_hitbox[0] = right_wall-p2_hitbox[2]
         
     
 
@@ -800,16 +819,16 @@ while not done:
     
 
         
-    '''player 1'''
-    
-    if p1_hitbox[1] >= ground-p1_hitbox[3]:
-        p1_hitbox[1] = ground-p1_hitbox[3]
-        p1_vel[1] = 0
-
-    ''' p2 '''
-    if p2_hitbox[1] >= ground-p2_hitbox[3]:
-        p2_hitbox[1] = ground-p2_hitbox[3]
-        p2_vel[1] = 0
+##    '''player 1'''
+##    
+##    if p1_hitbox[1] >= ground-p1_hitbox[3]:
+##        p1_hitbox[1] = ground-p1_hitbox[3]
+##        p1_vel[1] = 0
+##
+##    ''' p2 '''
+##    if p2_hitbox[1] >= ground-p2_hitbox[3]:
+##        p2_hitbox[1] = ground-p2_hitbox[3]
+##        p2_vel[1] = 0
 
     
 
@@ -867,3 +886,5 @@ while not done:
 
 # Close window on quit
 pygame.quit()
+
+   
