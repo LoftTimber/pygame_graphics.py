@@ -122,31 +122,31 @@ class Ship(pygame.sprite.Sprite):
     
 
     def cast_fire(self):
+        spell = Fire(fire_img)
+
+        spell.rect.centerx = self.rect.centerx
+        spell.rect.centery = self.rect.top
+        
+        spells1.add(spell)
+
+
+        
+        
 ##        spell = Fire(fire_img)
 ##
-##        spell.rect.centerx = self.rect.centerx
+##        spell.rect.centerx = self.rect.centerx+100
 ##        spell.rect.centery = self.rect.top
 ##        
 ##        spells1.add(spell)
-
-
-        
-        
-        spell = Fire(fire_img)
-
-        spell.rect.centerx = self.rect.centerx+100
-        spell.rect.centery = self.rect.top
-        
-        spells1.add(spell)
-
-        spell = Fire(fire_img)
-
-        spell.rect.centerx = self.rect.centerx-100
-        spell.rect.centery = self.rect.top
-        
-        spells1.add(spell)
-
-        self.shot_range -= 30
+##
+##        spell = Fire(fire_img)
+##
+##        spell.rect.centerx = self.rect.centerx-100
+##        spell.rect.centery = self.rect.top
+##        
+##        spells1.add(spell)
+##
+##        self.shot_range -= 30
         
 
     def cast_thunder(self):
@@ -289,28 +289,28 @@ class Mob(pygame.sprite.Sprite):
                 and (spell.rect.top <= self.rect.bottom+(7*spell.speed) and spell.rect.bottom >= self.rect.top):
                 can_not_go_right = True
 
-            if (spell.rect.centerx >= (self.rect.centerx)-500 and spell.rect.centerx < (self.rect.centerx)-63) \
+            if (spell.rect.centerx >= (self.rect.centerx)-120 and spell.rect.centerx < (self.rect.centerx)-63) \
                 and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
                 will_not_go_left = True
 
-            if (spell.rect.centerx > (self.rect.centerx)+63 and spell.rect.centerx < (self.rect.centerx)+500) \
+            if (spell.rect.centerx > (self.rect.centerx)+63 and spell.rect.centerx < (self.rect.centerx)+120) \
                 and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
                 will_not_go_right = True
 
             if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
-                and (spell.rect.top <= self.rect.bottom+(7*spell.speed) and spell.rect.bottom >= self.rect.top):
+                and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
                 would_not_go_left = True
 
             if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+200) \
-                and (spell.rect.top <= self.rect.bottom+(7*spell.speed) and spell.rect.bottom >= self.rect.top):
+                and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
                 would_not_go_right = True
 
             if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
-                and (spell.rect.top <= self.rect.bottom+(28*spell.speed) and spell.rect.bottom >= self.rect.top+(14*spell.speed)):
+                and (spell.rect.top <= self.rect.bottom+(28*spell.speed) and spell.rect.bottom >= self.rect.top+(30*spell.speed)):
                 would_not_go_left_far = True  
 
             if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+200) \
-                and (spell.rect.top <= self.rect.bottom+(28*spell.speed) and spell.rect.bottom >= self.rect.top+(14*spell.speed)):
+                and (spell.rect.top <= self.rect.bottom+(28*spell.speed) and spell.rect.bottom >= self.rect.top+(30*spell.speed)):
                 would_not_go_right_far = True
 
             if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
@@ -338,14 +338,16 @@ class Mob(pygame.sprite.Sprite):
 ##                self.rect.x -= self.speed
         
 
-        if (spell_to_left == True or spell_to_right == True) and can_not_go_right == True and can_not_go_left == False:
+        if (spell_to_left_far == True or spell_to_right_far == True) and can_not_go_right == True and can_not_go_left == False:
             self.rect.x -= self.speed
 
-        elif (spell_to_left == True or spell_to_right == True) and can_not_go_left == True and can_not_go_right == False:
+        elif (spell_to_left_far == True or spell_to_right_far == True) and can_not_go_left == True and can_not_go_right == False:
             self.rect.x += self.speed
 
         elif (spell_to_left == True or spell_to_right == True) and can_not_go_left == True and can_not_go_right == True:
             pass
+
+        
 
         elif (spell_to_left_far == True or spell_to_right_far == True) and spell_to_far_right == True and will_not_go_right == True:
             self.rect.x -= self.speed
@@ -359,14 +361,23 @@ class Mob(pygame.sprite.Sprite):
         elif (spell_to_left_far == True or spell_to_right_far == True) and will_not_go_left == True and will_not_go_right == False and can_not_go_right == False:
             self.rect.x += self.speed
 
+        elif (spell_to_left_very_far == True or spell_to_right_very_far == True or spell_to_far_left) and would_not_go_right_far == True and would_not_go_left_far == False and can_not_go_left == False:
+            self.rect.x -= self.speed
+
+        elif (spell_to_left_very_far == True or spell_to_right_very_far == True or spell_to_far_right) and would_not_go_left_far == True and would_not_go_right_far == False and can_not_go_right == False:
+            self.rect.x += self.speed
+            #########################################
+
+        
+
         elif (spell_to_left_far == False or spell_to_right_far == False) and would_not_go_right == False and would_not_go_left == False\
              and would_not_go_right_far == True and would_not_go_left_far == True and would_not_go_right_very_far == True and would_not_go_left_very_far == True \
-             and will_not_go_left == False:
+             and will_not_go_left == False and can_not_go_left == False:
             self.rect.x -= self.speed
 
         elif (spell_to_left_far == False or spell_to_right_far == False) and would_not_go_right == False and would_not_go_left == False\
              and would_not_go_right_far == True and would_not_go_left_far == True and would_not_go_right_very_far == True and would_not_go_left_very_far == True \
-             and will_not_go_right == False:
+             and will_not_go_right == False and can_not_go_right == False:
             self.rect.x += self.speed
 
         elif (spell_to_left_very_far == True or spell_to_right_very_far == True) and would_not_go_left == True and would_not_go_right == False\
