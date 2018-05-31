@@ -28,11 +28,11 @@ GREEN = (0, 255, 0)
 # Images
 pix1_img = pygame.image.load('space_game_stuff/images/pixel.png')
 ship_img = pygame.image.load('space_game_stuff/images/player_facing_left.png')
-fire_img = pygame.image.load('space_game_stuff/images/player_jump_left.png')
-thunder_img = pygame.image.load('space_game_stuff/images/player_jump_right.png')
-
-
-
+fire_img = pygame.image.load('space_game_stuff/images/pixel.png')
+thunder_img = pygame.image.load('space_game_stuff/images/pixel.png')
+##player_facing_left
+##player_jump_left
+##player_jump_right
 
 # Game classes
 class Pixel(pygame.sprite.Sprite):
@@ -108,8 +108,9 @@ class Ship(pygame.sprite.Sprite):
         self.rect.y = y
 
         self.speed = 10
-        self.shield = 1
+        self.shield = 100
         self.shot_range = 500
+        
 
     def move_left(self):
         self.rect.x -= self.speed
@@ -125,28 +126,29 @@ class Ship(pygame.sprite.Sprite):
         spell = Fire(fire_img)
 
         spell.rect.centerx = self.rect.centerx
-        spell.rect.centery = self.rect.top
+        spell.rect.bottom = self.rect.top
+        spell.side = 1
         
         spells1.add(spell)
 
 
         
         
-##        spell = Fire(fire_img)
-##
-##        spell.rect.centerx = self.rect.centerx+100
-##        spell.rect.centery = self.rect.top
-##        
-##        spells1.add(spell)
-##
-##        spell = Fire(fire_img)
-##
-##        spell.rect.centerx = self.rect.centerx-100
-##        spell.rect.centery = self.rect.top
-##        
-##        spells1.add(spell)
-##
-##        self.shot_range -= 30
+        spell = Fire(fire_img)
+
+        spell.rect.centerx = self.rect.centerx+100
+        spell.rect.bottom = self.rect.top
+        spell.side = 1
+        spells1.add(spell)
+
+        spell = Fire(fire_img)
+
+        spell.rect.centerx = self.rect.centerx-100
+        spell.rect.bottom= self.rect.top
+        spell.side = 1
+        spells1.add(spell)
+
+        self.shot_range -= 30
         
 
     def cast_thunder(self):
@@ -154,14 +156,16 @@ class Ship(pygame.sprite.Sprite):
 
         spell.rect.centerx = self.rect.centerx
         spell.rect.centery = self.rect.top
+        spell.side = 1
         
         spells2.add(spell)
 
-    def update(self, bombs):
-        hit_list = pygame.sprite.spritecollide(self, bombs, True)
-
+    def update(self):
+        hit_list = pygame.sprite.spritecollide(self, spells1, False)
+        for spell in spells1:
+            spell.damage = spell.damage
         for hit in hit_list:
-            self.shield -= 1
+            self.shield -= spell.damage
 
             
         if self.shield <= 0:
@@ -179,8 +183,11 @@ class Fire(pygame.sprite.Sprite):
 
         self.image = image
         self.rect = image.get_rect()
+
+        self.damage = 100
+        self.hp = 5
+        self.speed = 5
         
-        self.speed = 3
 
     def move_left(self, ship):
         self.rect.x -= ship.speed
@@ -188,8 +195,33 @@ class Fire(pygame.sprite.Sprite):
     def move_right(self, ship):
         self.rect.x += ship.speed
 
-    def update(self, mob1):
-        self.rect.y -= self.speed
+    def update(self, side, mob1):
+        if self.side == 1:
+            self.rect.y -= self.speed
+
+        if self.side == 2:
+            self.rect.y += self.speed
+
+        hit_list = pygame.sprite.spritecollide(self, spells1, False)
+        for spell in spells1:
+            spell.damage = spell.damage
+        for hit in hit_list:
+            if hit != self:
+                self.hp -= spell.damage
+                self.hp -= self.damage
+
+        hit_list = pygame.sprite.spritecollide(self, player, False)
+        for spell in spells1:
+            spell.damage = spell.damage
+        for hit in hit_list:
+            if hit != self:
+                self.hp -= spell.damage
+                self.hp -= self.damage
+
+            
+        if self.hp <= 0:
+            self.kill()
+            
 
 ##        if mob1.rect.centerx > self.rect.centerx:
 ##            self.rect.x += self.speed
@@ -214,7 +246,11 @@ class Thunder(pygame.sprite.Sprite):
         self.speed = 12
 
     def update(self):
-        self.rect.y -= self.speed
+        if self.side == 1:
+            self.rect.y -= self.speed
+
+        if self.side == 2:
+            self.rect.y += self.speed
 
 
     
@@ -229,6 +265,8 @@ class Mob(pygame.sprite.Sprite):
 
         self.speed = 15
         self.shield = 1
+
+        
         
     def move_left(self, ship):
         self.rect.x -= ship.speed
@@ -257,102 +295,102 @@ class Mob(pygame.sprite.Sprite):
         spell_to_far_left = False
         spell_to_far_right = False
         for spell in spells1:
-            if ((spell.rect.right >= self.rect.left) and spell.rect.centerx <= self.rect.centerx) \
-                and (spell.rect.top <= self.rect.bottom+(7*spell.speed) and spell.rect.bottom >= self.rect.top):
-                spell_to_left = True
+            if spell.side == 1:
+                if ((spell.rect.right >= self.rect.left) and spell.rect.centerx <= self.rect.centerx) \
+                    and (spell.rect.top <= self.rect.bottom+(200) and spell.rect.bottom >= self.rect.top):
+                    spell_to_left = True
 
-            if (spell.rect.centerx > self.rect.centerx and spell.rect.left <= self.rect.right) \
-                and (spell.rect.top <= self.rect.bottom+(7*spell.speed) and spell.rect.bottom >= self.rect.top):
-                spell_to_right = True
+                if (spell.rect.centerx > self.rect.centerx and spell.rect.left <= self.rect.right) \
+                    and (spell.rect.top <= self.rect.bottom+(200) and spell.rect.bottom >= self.rect.top):
+                    spell_to_right = True
 
-            if ((spell.rect.right >= self.rect.left) and spell.rect.centerx <= self.rect.centerx) \
-                and (spell.rect.top <= self.rect.bottom+(28*spell.speed) and spell.rect.bottom >= self.rect.top):
-                spell_to_left_far = True
+                if ((spell.rect.right >= self.rect.left) and spell.rect.centerx <= self.rect.centerx) \
+                    and (spell.rect.top <= self.rect.bottom+(400) and spell.rect.bottom >= self.rect.top):
+                    spell_to_left_far = True
 
-            if (spell.rect.centerx > self.rect.centerx and spell.rect.left <= self.rect.right) \
-                and (spell.rect.top <= self.rect.bottom+(28*spell.speed) and spell.rect.bottom >= self.rect.top):
-                spell_to_right_far = True
+                if (spell.rect.centerx > self.rect.centerx and spell.rect.left <= self.rect.right) \
+                    and (spell.rect.top <= self.rect.bottom+(400) and spell.rect.bottom >= self.rect.top):
+                    spell_to_right_far = True
 
-            if ((spell.rect.right >= self.rect.left) and spell.rect.centerx <= self.rect.centerx) \
-                and (spell.rect.top <= self.rect.bottom+(100*spell.speed) and spell.rect.bottom >= self.rect.top+(14*spell.speed)):
-                spell_to_left_very_far = True
+                if ((spell.rect.right >= self.rect.left) and spell.rect.centerx <= self.rect.centerx) \
+                    and (spell.rect.top <= self.rect.bottom+(1000) and spell.rect.bottom >= self.rect.top+(400)):
+                    spell_to_left_very_far = True
 
-            if (spell.rect.centerx > self.rect.centerx and spell.rect.left <= self.rect.right) \
-                and (spell.rect.top <= self.rect.bottom+(100*spell.speed) and spell.rect.bottom >= self.rect.top+(14*spell.speed)):
-                spell_to_right_very_far = True
+                if (spell.rect.centerx > self.rect.centerx and spell.rect.left <= self.rect.right) \
+                    and (spell.rect.top <= self.rect.bottom+(1000) and spell.rect.bottom >= self.rect.top+(400)):
+                    spell_to_right_very_far = True
 
-            if (spell.rect.centerx >= (self.rect.centerx)-63-self.speed and spell.rect.centerx < (self.rect.centerx)) \
-                and (spell.rect.top <= self.rect.bottom+(7*spell.speed) and spell.rect.bottom >= self.rect.top):
-                can_not_go_left = True
+                if (spell.rect.right >= (self.rect.left)-(self.speed*2) and spell.rect.centerx < (self.rect.centerx)) \
+                    and (spell.rect.top <= self.rect.bottom+(200) and spell.rect.bottom >= self.rect.top):
+                    can_not_go_left = True
 
-            if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+63+self.speed) \
-                and (spell.rect.top <= self.rect.bottom+(7*spell.speed) and spell.rect.bottom >= self.rect.top):
-                can_not_go_right = True
+                if (spell.rect.centerx > (self.rect.centerx) and spell.rect.left < (self.rect.right)+(self.speed*2)) \
+                    and (spell.rect.top <= self.rect.bottom+(200) and spell.rect.bottom >= self.rect.top):
+                    can_not_go_right = True
 
-            if (spell.rect.centerx >= (self.rect.centerx)-120 and spell.rect.centerx < (self.rect.centerx)-63) \
-                and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
-                will_not_go_left = True
+                if (spell.rect.centerx >= (self.rect.centerx)-120 and spell.rect.right < (self.rect.left)) \
+                    and (spell.rect.top <= self.rect.bottom+(200) and spell.rect.bottom >= self.rect.top):
+                    will_not_go_left = True
 
-            if (spell.rect.centerx > (self.rect.centerx)+63 and spell.rect.centerx < (self.rect.centerx)+120) \
-                and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
-                will_not_go_right = True
+                if (spell.rect.right > (self.rect.left) and spell.rect.centerx < (self.rect.centerx)+120) \
+                    and (spell.rect.top <= self.rect.bottom+(200) and spell.rect.bottom >= self.rect.top):
+                    will_not_go_right = True
 
-            if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
-                and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
-                would_not_go_left = True
+                if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
+                    and (spell.rect.top <= self.rect.bottom+(300) and spell.rect.bottom >= self.rect.top):
+                    would_not_go_left = True
 
-            if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+200) \
-                and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
-                would_not_go_right = True
+                if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+200) \
+                    and (spell.rect.top <= self.rect.bottom+(300) and spell.rect.bottom >= self.rect.top):
+                    would_not_go_right = True
 
-            if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
-                and (spell.rect.top <= self.rect.bottom+(28*spell.speed) and spell.rect.bottom >= self.rect.top+(30*spell.speed)):
-                would_not_go_left_far = True  
+                if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
+                    and (spell.rect.top <= self.rect.bottom+(600) and spell.rect.bottom >= self.rect.top+(400)):
+                    would_not_go_left_far = True  
 
-            if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+200) \
-                and (spell.rect.top <= self.rect.bottom+(28*spell.speed) and spell.rect.bottom >= self.rect.top+(30*spell.speed)):
-                would_not_go_right_far = True
+                if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+200) \
+                    and (spell.rect.top <= self.rect.bottom+(600) and spell.rect.bottom >= self.rect.top+(400)):
+                    would_not_go_right_far = True
 
-            if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
-                and (spell.rect.top <= self.rect.bottom+(64*spell.speed) and spell.rect.bottom >= self.rect.top+(35*spell.speed)):
-                would_not_go_left_very_far = True
-               
+                if (spell.rect.centerx >= (self.rect.centerx)-200 and spell.rect.centerx < (self.rect.centerx)) \
+                    and (spell.rect.top <= self.rect.bottom+(500) and spell.rect.bottom >= self.rect.top+(400)):
+                    would_not_go_left_very_far = True
+                   
 
-            if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+200) \
-                and (spell.rect.top <= self.rect.bottom+(64*spell.speed) and spell.rect.bottom >= self.rect.top+(35*spell.speed)):
-                would_not_go_right_very_far = True
-               
+                if (spell.rect.centerx > (self.rect.centerx) and spell.rect.centerx < (self.rect.centerx)+200) \
+                    and (spell.rect.top <= self.rect.bottom+(500) and spell.rect.bottom >= self.rect.top+(400)):
+                    would_not_go_right_very_far = True
+                   
 
-            if ((spell.rect.right >= self.rect.left-200) and spell.rect.centerx <= self.rect.centerx) \
-                and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
-                spell_to_far_left = True
+                if ((spell.rect.right >= self.rect.left-200) and spell.rect.centerx <= self.rect.centerx) \
+                    and (spell.rect.top <= self.rect.bottom+(300) and spell.rect.bottom >= self.rect.top):
+                    spell_to_far_left = True
 
-            if (spell.rect.centerx > self.rect.centerx and spell.rect.left <= self.rect.right+200) \
-                and (spell.rect.top <= self.rect.bottom+(14*spell.speed) and spell.rect.bottom >= self.rect.top):
-               spell_to_far_right = True
+                if (spell.rect.centerx > self.rect.centerx and spell.rect.left <= self.rect.right+200) \
+                    and (spell.rect.top <= self.rect.bottom+(300) and spell.rect.bottom >= self.rect.top):
+                   spell_to_far_right = True
 
-##        if can_not_go_right == True and can_not_go_left == True:
-##            if spell_to_close_left == True:
-##                self.rect.x += self.speed
-##            if spell_to_close_right == True:
-##                self.rect.x -= self.speed
-        
+    ##        if can_not_go_right == True and can_not_go_left == True:
+    ##            if spell_to_close_left == True:
+    ##                self.rect.x += self.speed
+    ##            if spell_to_close_right == True:
+    ##                self.rect.x -= self.speed
+            
 
         if (spell_to_left_far == True or spell_to_right_far == True) and can_not_go_right == True and can_not_go_left == False:
             self.rect.x -= self.speed
 
         elif (spell_to_left_far == True or spell_to_right_far == True) and can_not_go_left == True and can_not_go_right == False:
-            self.rect.x += self.speed
-
-        elif (spell_to_left == True or spell_to_right == True) and can_not_go_left == True and can_not_go_right == True:
-            pass
+            self.rect.x += self.speed        
 
         
 
-        elif (spell_to_left_far == True or spell_to_right_far == True) and spell_to_far_right == True and will_not_go_right == True:
+        elif (spell_to_left_far == True or spell_to_right_far == True) and spell_to_far_right == True and will_not_go_right == True \
+             and can_not_go_right == True and can_not_go_left == False:
             self.rect.x -= self.speed
             
-        elif (spell_to_left_far == True or spell_to_right_far == True) and spell_to_far_left == True and will_not_go_left == True:
+        elif (spell_to_left_far == True or spell_to_right_far == True) and spell_to_far_left == True and will_not_go_left == True \
+             and can_not_go_left == True and can_not_go_right == False:
             self.rect.x += self.speed
 
         elif (spell_to_left_far == True or spell_to_right_far == True) and will_not_go_right == True and will_not_go_left == False and can_not_go_left == False:
@@ -361,43 +399,47 @@ class Mob(pygame.sprite.Sprite):
         elif (spell_to_left_far == True or spell_to_right_far == True) and will_not_go_left == True and will_not_go_right == False and can_not_go_right == False:
             self.rect.x += self.speed
 
-        elif (spell_to_left_very_far == True or spell_to_right_very_far == True or spell_to_far_left) and would_not_go_right_far == True and would_not_go_left_far == False and can_not_go_left == False:
+        elif (spell_to_left_very_far == True or spell_to_right_very_far == True or spell_to_far_left) and would_not_go_right_far == True \
+             and would_not_go_left_far == False and can_not_go_left == False:
             self.rect.x -= self.speed
 
-        elif (spell_to_left_very_far == True or spell_to_right_very_far == True or spell_to_far_right) and would_not_go_left_far == True and would_not_go_right_far == False and can_not_go_right == False:
+        elif (spell_to_left_very_far == True or spell_to_right_very_far == True or spell_to_far_right) and would_not_go_left_far == True \
+             and would_not_go_right_far == False and can_not_go_right == False:
             self.rect.x += self.speed
             #########################################
 
         
 
-        elif (spell_to_left_far == False or spell_to_right_far == False) and would_not_go_right == False and would_not_go_left == False\
-             and would_not_go_right_far == True and would_not_go_left_far == True and would_not_go_right_very_far == True and would_not_go_left_very_far == True \
+        elif (spell_to_left_far == False or spell_to_right_far == False) and would_not_go_right == True and would_not_go_left == True\
+             and would_not_go_right_far == True and would_not_go_left_far == True  \
              and will_not_go_left == False and can_not_go_left == False:
             self.rect.x -= self.speed
 
-        elif (spell_to_left_far == False or spell_to_right_far == False) and would_not_go_right == False and would_not_go_left == False\
-             and would_not_go_right_far == True and would_not_go_left_far == True and would_not_go_right_very_far == True and would_not_go_left_very_far == True \
+        elif (spell_to_left_far == False or spell_to_right_far == False) and would_not_go_right == True and would_not_go_left == True\
+             and would_not_go_right_far == True and would_not_go_left_far == True  \
              and will_not_go_right == False and can_not_go_right == False:
             self.rect.x += self.speed
 
         elif (spell_to_left_very_far == True or spell_to_right_very_far == True) and would_not_go_left == True and would_not_go_right == False\
              and will_not_go_right == False and can_not_go_right == False:
-            self.rect.x += self.speed
-
-        elif (spell_to_left_very_far == True or spell_to_right_very_far == True) and would_not_go_right == True and would_not_go_left == True\
-             and will_not_go_right == False and can_not_go_right == False:
-            self.rect.x += self.speed
+            self.rect.x -= self.speed
 
         elif (spell_to_left_very_far == True or spell_to_right_very_far == True) and would_not_go_right == True and would_not_go_left == True\
              and will_not_go_left == False and can_not_go_left == False:
             self.rect.x -= self.speed
 
+        elif (spell_to_left_very_far == True or spell_to_right_very_far == True) and would_not_go_right == True and would_not_go_left == True\
+             and will_not_go_right == False and can_not_go_right == False:
+            self.rect.x += self.speed
+
+        
+
         
  
-        elif spell_to_left == True:
+        elif spell_to_left == True and can_not_go_right == False:
             self.rect.x += self.speed
         
-        elif spell_to_right == True:
+        elif spell_to_right == True and can_not_go_left == False:
             self.rect.x -= self.speed
             
 
@@ -408,18 +450,34 @@ class Mob(pygame.sprite.Sprite):
 
             
 
-        
+    def cast_fire(self):
+        spell = Fire(fire_img)
 
-    def drop_bomb(self):
-        bomb = Bomb(fire_img)
-
-        bomb.rect.centerx = self.rect.centerx
-        bomb.rect.y = self.rect.bottom
+        spell.rect.centerx = self.rect.centerx
+        spell.rect.y = self.rect.bottom
+        spell.side = 2
         
-        bombs.add(bomb)
+        spells1.add(spell)
+
+    def cast_thunder(self):
+        spell = Thunder(thunder_img)
+
+        spell.rect.centerx = self.rect.centerx
+        spell.rect.centery = self.rect.top
+        spell.side = 2
+        
+        spells2.add(spell)
+
+##    def drop_bomb(self):
+##        bomb = Bomb(fire_img)
+##
+##        bomb.rect.centerx = self.rect.centerx
+##        bomb.rect.y = self.rect.bottom
+##        
+##        bombs.add(bomb)
 
     def update(self, spells1, spells2):
-        hit_list = pygame.sprite.spritecollide(self, spells1, True)
+        hit_list = pygame.sprite.spritecollide(self, spells1, False)
         
         
 
@@ -427,7 +485,7 @@ class Mob(pygame.sprite.Sprite):
             self.shield -= 1
 
         
-        hit_list = pygame.sprite.spritecollide(self, spells2, True)
+        hit_list = pygame.sprite.spritecollide(self, spells2, False)
 
         for hit in hit_list:
             self.shield -= 1
@@ -438,24 +496,24 @@ class Mob(pygame.sprite.Sprite):
         
 
 
-class Bomb(pygame.sprite.Sprite):
-    
-    def __init__(self, image):
-        super().__init__()
-
-        self.image = image
-        self.rect = image.get_rect()
-        
-        self.speed = 6
-
-    def move_left(self, ship):
-        self.rect.x -= ship.speed
-        
-    def move_right(self, ship):
-        self.rect.x += ship.speed
-
-    def update(self):
-        self.rect.y += self.speed
+##class Bomb(pygame.sprite.Sprite):
+##    
+##    def __init__(self, image):
+##        super().__init__()
+##
+##        self.image = image
+##        self.rect = image.get_rect()
+##        
+##        self.speed = 6
+##
+##    def move_left(self, ship):
+##        self.rect.x -= ship.speed
+##        
+##    def move_right(self, ship):
+##        self.rect.x += ship.speed
+##
+##    def update(self):
+##        self.rect.y += self.speed
     
     
 class Fleet:
@@ -553,8 +611,8 @@ while not done:
 ##        mobs.add(Mob(500, 64, ship_img))
 
     pixels.update(spells1, mobs)
-    player.update(bombs)
-    spells1.update(mob1)
+    player.update()
+    spells1.update(ship, mob1)
 
     spells2.update()
     mobs.update(spells1, spells2)
@@ -562,8 +620,8 @@ while not done:
 
     for m in mobs:
         m.move(spells1, spells2)
-        if beat%(int(quarter)) == 0:
-            m.drop_bomb()
+##        if beat%(int(quarter)) == 0:
+##            m.cast_fire()
 
     
 
@@ -576,6 +634,7 @@ while not done:
     player.draw(screen)
     mobs.draw(screen)
     bombs.draw(screen)
+    
 
 
     
