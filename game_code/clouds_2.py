@@ -213,41 +213,21 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
 
-        state = pygame.key.get_pressed()
-
-        up = state[pygame.K_t]
-        down = state[pygame.K_DOWN]
-        left = state[pygame.K_LEFT]
-        right = state[pygame.K_RIGHT]
-
-        holding_w = state[pygame.K_w]
-        holding_s = state[pygame.K_s]
-        holding_a = state[pygame.K_a]
-        holding_d = state[pygame.K_d]
-        
-
-
-        '''
-        if event.key == pygame.K_w:
-            if p2_hitbox[1] >= p2_ground - p1_hitbox[3]:
-                p2_vel[1] = -9.8
-                '''
-
-
-
-                
-        if holding_s:
-            gravity = gravity*10
-        if holding_d:
-            p2_vel[0] = p2_speed
-            p2_facing_right = True
-            p2_facing_left = False
-        if holding_a:
-            p2_vel[0] = -p2_speed
-            p2_facing_right = False
-            p2_facing_left = True
+    
 
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_t:
+                if down and p1_landed:
+                    p1_vel[1] = p1_up_force
+                elif p1_landed:
+                    p1_vel[1] = -9.8
+
+            if event.key == pygame.K_w:
+                if holding_s and p2_landed:
+                    p2_vel[1] = p2_up_force
+                elif p2_landed:
+                    p2_vel[1] = -9.8
+                
             if event.key == pygame.K_SPACE:
                 time_past = -time_past+5
             if event.key == pygame.K_m:
@@ -267,27 +247,10 @@ while not done:
                     
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_t:
-                if landed:
+                if p1_landed:
                     p1_vel[1] = up_force
                 
-            if event.key == pygame.K_DOWN:
-                pass
-            if event.key == pygame.K_RIGHT:
-                p1_vel[0] = 0
-            if event.key == pygame.K_LEFT:
-                p1_vel[0] = 0
-
-        
-            if event.key == pygame.K_w:
-                if p2_vel[1] < 0:
-                    p2_vel[1] = 0
-            if event.key == pygame.K_s:
-                pass
-            if event.key == pygame.K_d:
-                p2_vel[0] = 0
-            if event.key == pygame.K_a:
-                p2_vel[0] = 0
-
+            
             
             if event.key == pygame.K_o:
                 time_motion = 0
@@ -296,41 +259,98 @@ while not done:
 
 
 
-                
+    state = pygame.key.get_pressed()
+
+    up = state[pygame.K_t]
+    down = state[pygame.K_DOWN]
+    left = state[pygame.K_LEFT]
+    right = state[pygame.K_RIGHT]
+
+    holding_w = state[pygame.K_w]
+    holding_s = state[pygame.K_s]
+    holding_a = state[pygame.K_a]
+    holding_d = state[pygame.K_d]
+
+    ''' p1 '''
     if p1_hitbox[1] >= p1_ground - p1_hitbox[3]:
-        
-        landed = True
+    
+        p1_landed = True
     else:
-        landed = False
-        up_force = 0
+        p1_landed = False
+        p1_up_force = 0
+    
+    
+    
+    if p1_vel[0] > 0:
+        p1_vel[0] -= .1
+
+    if p1_vel[0] < 0:
+        p1_vel[0] += .1
+        
+    ''' p2 '''
+    if p2_hitbox[1] >= p2_ground - p2_hitbox[3]:
+    
+        p2_landed = True
+    else:
+        p2_landed = False
+        p2_up_force = 0
+    
+    
+    
+    if p2_vel[0] > 0:
+        p2_vel[0] -= .1
+
+    if p2_vel[0] < 0:
+        p2_vel[0] += .1
+
+        
+
+
+
+                
+    if holding_s:
+        gravity = gravity*10
+    if holding_d:
+        p2_vel[0] = p2_speed
+        p2_facing_right = True
+        p2_facing_left = False
+    if holding_a:
+        p2_vel[0] = -p2_speed
+        p2_facing_right = False
+        p2_facing_left = True
+    
         
         
         
     
-
+    if down:
         
-
-        
-    if up:
-        if landed and down:
-            if landed:
-                p1_vel[1] = -(p1_hitbox[3] / 8)
-        
-            
-        if landed and up_force >= -p1_hitbox[3] / 16:
+                
+        if p1_landed and up_force >= -p1_hitbox[3] / 16:
             up_force -= p1_hitbox[3] / 16
-        elif landed and up_force >= -p1_hitbox[3] / 4:
+        elif p1_landed and up_force >= -p1_hitbox[3] / 4:
             up_force -= .1
+
+        
+    
+            
+            
             
         
-    if not up:
-        up_force = 0
+            
+        
+    
 
 
             
-        if down:
+    if down:
+        if p1_landed:
+            p1_vel[0] = 0
+        if not p1_landed:
             gravity = gravity*10
-        
+
+    if not down:
+    
         if right:
             p1_vel[0] = p1_speed
             facing_right = True
@@ -377,6 +397,16 @@ while not done:
     
     
     ''' horizontal collision '''
+    #player to player
+    if rect_rect(p1_hitbox, p2_hitbox):
+            p1_vel[0] = (p1_vel[0] + p2_vel[0]) / 2
+            p2_vel[0] = (p1_vel[0] + p2_vel[0]) / 2
+            if p1_hitbox[0] > p2_hitbox[0]:
+                p1_hitbox[0] = p2_hitbox[0] - p1_hitbox[2]
+            if p2_hitbox[0] > p1_hitbox[0]:
+                p1_hitbox[0] = p2_hitbox[0] + p2_hitbox[2]
+            
+             
     p1_hitbox[0] += p1_vel[0]
     p2_hitbox[0] += p2_vel[0]
     
@@ -396,19 +426,11 @@ while not done:
             if p2_vel[0] < 0:
                 p2_hitbox[0] = w[0] + w[2]
                 
-    #player to player1
-    if rect_rect(p1_hitbox, p2_hitbox):        
-            if p1_vel[0] > 0:
-                p1_hitbox[0] = p2_hitbox[0] - p1_hitbox[2]
-            if p1_vel[0] < 0:
-                p1_hitbox[0] = p2_hitbox[0] + p2_hitbox[2]
-
-    #player to player2
-    if rect_rect(p2_hitbox, p1_hitbox):        
-            if p2_vel[0] > 0:
-                p2_hitbox[0] = p1_hitbox[0] - p2_hitbox[2]
-            if p2_vel[0] < 0:
-                p2_hitbox[0] = p1_hitbox[0] + p1_hitbox[2]
+   
+    
+    
+    
+           
 
     
 
@@ -441,24 +463,14 @@ while not done:
 
     #player to player1
     if rect_rect(p1_hitbox, p2_hitbox):
-            if p1_vel[1] > 0:
-                p1_hitbox[1] = p2_hitbox[1] - p1_hitbox[3]
-                p1_ground = p2_hitbox[1]
-                p1_vel[0] += p2_vel[0]
+        p1_vel[1] = (p1_vel[1] + p2_vel[1]) / 2
+        p2_vel[1] = (p2_vel[1] + p1_vel[1]) / 2
+            
                 
-            if p1_vel[1] < 0:
-                p1_hitbox[1] = p2_hitbox[1] + p2_hitbox[3] 
-                p1_vel[1] = 0
                 
-    #player to player2
-    if rect_rect(p2_hitbox, p1_hitbox):
-            if p2_vel[1] > 0:
-                p2_hitbox[1] = p1_hitbox[1] - p2_hitbox[3]
-                p2_ground = p1_hitbox[1]
+            
                 
-            if p2_vel[1] < 0:
-                p2_hitbox[1] = p1_hitbox[1] + p1_hitbox[3] 
-                p2_vel[1] = 0
+    
 
 
     

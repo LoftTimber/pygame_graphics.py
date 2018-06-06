@@ -1,0 +1,71 @@
+==========================
+Welcome to Guess a Number!
+==========================
+---------------
+Insert a high: 100
+---------------
+I'm thinking of a number from 1 to 100.
+You have 6 tries left.
+Take a guess, 1 to 100: 50
+You guessed too high.
+You have 5 tries left.
+Take a guess, 1 to 49: 25
+You guessed too high.
+You have 4 tries left.
+Take a guess, 1 to 24: 13
+You guessed too low.
+You have 3 tries left.
+Take a guess, 14 to 24: 20
+You guessed too high.
+You have 2 tries left.
+Take a guess, 14 to 19: 15
+You guessed too low.
+You have 1 tries left.
+Take a guess, 16 to 19: 17
+You guessed too low.
+---------------------
+You ran out of tries!
+The number was 18.
+---------------------
+>>>>>>>>>-<<<<<<<<<
+>>>>>Game Over<<<<<
+>>>>>>>>>-<<<<<<<<<
+Would you like to play again? (y/n) y
+---------------
+Insert a high: 100
+---------------
+I'm thinking of a number from 1 to 100.
+You have 6 tries left.
+Take a guess, 1 to 100: 0
+You need to use a number that is 1 through 100.
+You still have 6 left.
+Take a guess, 1 to 100: 101
+You need to use a number that is 1 through 100.
+You still have 6 left.
+Take a guess, 1 to 100: 50
+You guessed too low.
+You have 5 tries left.
+Take a guess, 51 to 100: 50
+You need to use a number that is 51 through 100.
+You still have 5 left.
+Take a guess, 51 to 100: 75
+You guessed too high.
+You have 4 tries left.
+Take a guess, 51 to 74: 63
+You guessed too high.
+You have 3 tries left.
+Take a guess, 51 to 62: 55
+You guessed too high.
+You have 2 tries left.
+Take a guess, 51 to 54: 52
+You guessed too high.
+You have 1 tries left.
+Take a guess, 51 to 51: 51
+-----------
+You got it!
+-----------
+Would you like to play again? (y/n) n
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@Thank you for playing!@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+

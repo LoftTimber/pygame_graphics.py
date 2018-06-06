@@ -1,0 +1,9 @@
+School Supplies
+backpack
+binder divider
+binder
+compass
+folder
+highlighter
+pencil
+pen
